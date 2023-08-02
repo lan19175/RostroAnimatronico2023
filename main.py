@@ -5,11 +5,11 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from pygrabber.dshow_graph import FilterGraph
 Window.maximize()
-Builder.load_file('templates/screenManager.kv')
-Builder.load_file('templates/mainWindow/mainWindow.kv')
-Builder.load_file('templates/motorDataSettingWindow/motorDataSettingWindow.kv')
-Builder.load_file('templates/motorWindow/motorWindow.kv')
-Builder.load_file('templates/settingsWindow/settingsWindow.kv')
+Builder.load_file('templates/manager_window.kv')
+Builder.load_file('templates/mainWindow/main_window.kv')
+Builder.load_file('templates/dataSettingWindow/data_setting_window.kv')
+Builder.load_file('templates/motorWindow/motor_window.kv')
+Builder.load_file('templates/settingsWindow/settings_window.kv')
 
 
 class WindowManager(ScreenManager):
@@ -27,6 +27,7 @@ class SettingWindow(Screen):
         for device_index, device_name in enumerate(devices):
             available_cameras[device_index] = device_name
             available_cameras_label.append(device_name)
+
         return available_cameras_label
 
 
