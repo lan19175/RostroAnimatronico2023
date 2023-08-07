@@ -1,44 +1,135 @@
 #:kivy 1.0
+#:import Factory kivy.factory.Factory
+
+#:set colorUVG (0,141/255,54/255,1)
+
+<CustomSpinnerOptions@SpinnerOption>:
+    background_color: [10/255, 132/255, 55/255, .8]
+    font_size: 30
+
+
 <SettingWindow>:
     name: "settings"
 
-    GridLayout:
-        cols: 2
+    BoxLayout:
+        background_color: 204/255,204/255,204/255,1
+        canvas.before:
+            Color:
+                rgba: self.background_color
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        orientation: "vertical"
+        
+        
         BoxLayout:
-            orientation: "vertical"
-            size_hint: 10000,1
+            orientation: "horizontal"
+            Image:
+                source: 'templates/settingsWindow/imagenes/Logo-UVG-03.png'
+                allow_stretch: True
+                keep_ratio: False
             Label:
-                background_color: 0,1,0,0.7
-                canvas.before:
-                    Color:
-                        rgba: self.background_color
-                    Rectangle:
-                        size: self.size
-                        pos: self.pos
+                text: ""     
+            Label:
                 id: click_label
-                text: "Setting Screen"
-                font_size: 32
-            Spinner:
-                id: spinner_id
-                pos_hint: {'center_x':0.5}
-                size_hint: 0.6, None
-                height: 70
-                text: "Seleccione su cámara"
-                values: root.values_array()
-                on_text: root.spinner_clicked(spinner_id.text)
+                text: "Pantalla de configuración"
+                font_size: 54
+                color: colorUVG
+                bold: True
             Label:
-                text: ''
-            
+                text: ""
+            AnchorLayout:
+                anchor_x: 'right'
+                anchor_y: 'top'
+                Button:
+                    id: exit_settings
+                    background_normal: ''
+                    background_down: ''
+                    background_color: .96, .23, .23, 1
+                    text: "X"
+                    font_size: 40
+                    size_hint:[None,None]
+                    size: [70,35]
+                    on_press: self.background_color = .84,.02,.02,1
+                    on_release: 
+                        self.background_color = 1, 0, 0, 1
+                        root.manager.transition.direction = "down"
+                        app.root.current = "main"
+        
+        Label:
+            text: '' 
+            size_hint: None, None
+            height: -150
 
-        AnchorLayout:
-            anchor_x: 'right'
-            anchor_y: 'top'
-            Button:
-                text: "X"
-                font_size: 40
-                background_color: 1,0,0,1
-                size_hint:[None,None]
-                size: [70,35]
-                on_release: 
-                    root.manager.transition.direction = "down"
-                    app.root.current = "main"
+
+        GridLayout:
+            cols: 7
+            Label:
+                text:''
+                size_hint: None, None
+                width: 400
+
+            Label:
+                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                size_hint: None, None
+                size: 500, 50
+                text: "     Ingrese el port para \nconectarse con el Rostro"
+                font_size: 45
+                color: colorUVG
+
+            Label:
+                text:''
+                
+            FloatLayout:
+                TextInput:
+                    id: COM
+                    pos_hint: {'center_x':0.5,'center_y': 0.1}
+                    size_hint: None, None
+                    size: 95, 70
+                    font_size: 45
+                    foreground_color: (13/255, 77/255, 78/255, 1)
+                    padding_x:[20,0]
+            Label:
+                text:''
+                size_hint: None, None
+                width: 75
+            
+            FloatLayout:
+                Button:
+                    id: "buscar_port"
+                    background_normal: ''
+                    background_down: ''
+                    background_color: colorUVG
+                    color: (1,1,1,1)
+                    text: "Conectar"
+                    font_size: 40
+                    size_hint: None, None
+                    size: [200,50]
+                    pos_hint: {'center_x': 0.5,'center_y': 0.1}
+
+            Label:
+                text:''
+                size_hint: None, None
+                width: 400
+
+        Label:
+            text: '' 
+            size_hint: None, None
+            height: 150
+
+        Spinner:
+            id: spinner_id
+            background_normal: ''
+            background_down: ''
+            background_color: colorUVG
+            pos_hint: {'center_x':0.5}
+            size_hint: 0.6, None
+            height: 70
+            text: "Seleccione su cámara"
+            font_size: 45
+            values: root.values_array()
+            on_text: root.spinner_clicked(spinner_id.text)
+            option_cls: Factory.get("CustomSpinnerOptions")
+
+        Label:
+            text: '' 

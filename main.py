@@ -18,7 +18,7 @@ class WindowManager(ScreenManager):
 
 class SettingWindow(Screen):
     def spinner_clicked(self, value):
-        self.ids.click_label.text = f'You selected: {value}'
+        pass
 
     def values_array(self):
         devices = FilterGraph().get_input_devices()
@@ -27,8 +27,10 @@ class SettingWindow(Screen):
         for device_index, device_name in enumerate(devices):
             available_cameras[device_index] = device_name
             available_cameras_label.append(device_name)
-
         return available_cameras_label
+
+    def conectar_com(self):
+        pass
 
 
 class MainWindow(Screen):
