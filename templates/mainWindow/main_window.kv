@@ -1,0 +1,18 @@
+#:kivy 1.0
+
+<MainWindow>:
+    name: "main"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        Label:
+            text: "Main Screen"
+            font_size: 32
+        
+        Button:
+            text: "Go Back"
+            font_sice: 32
+            on_release: 
+                app.root.current = "settings"
+                root.manager.transition.direction = "left"

@@ -1,0 +1,19 @@
+#:kivy 1.0
+
+<MotorDataSettingWindow>:
+    name: "motorDataSetting"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "Motor Setting Screen"
+            font_size: 32
+        
+        Button:
+            text: "Go Back"
+            font_sice: 32
+            on_release: 
+                app.root.current = "settings"
+                root.manager.transition.direction = "down"
