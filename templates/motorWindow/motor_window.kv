@@ -1,10 +1,22 @@
 #:kivy 1.0
 
+#:set colorUVG (0,141/255,54/255,1)
+
+
 <MotorWindow>:
+    on_pre_enter: root.initial_values()
     name: "motor"
     GridLayout:
         cols: 2
-
+        #background_color: (204/255, 204/255, 204/255, 1)
+        #background_color: (161/255, 161/255, 161/255, 1)
+        background_color: (181/255, 181/255, 181/255, 1)
+        canvas.before:
+            Color:
+                rgba: self.background_color
+            Rectangle:
+                size: self.size
+                pos: self.pos
         BoxLayout:
             orientation: "vertical"
             size_hint: [0.3,1]
@@ -15,6 +27,7 @@
             
             Button:
                 text: "Go Back"
+                color: colorUVG
                 font_sice: 32
                 on_release: 
                     app.root.current = "settings"
@@ -78,22 +91,51 @@
                     FloatLayout:
                         Label:
                             text: "SERVO 1"
-                            pos_hint: {'center_x':0.20,'center_y': 1.5}
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
                             font_size: 25
-                        
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
                         Label:
-                            text: "0°"
                             id: grados_servo0
-                            pos_hint: {'center_x':0.9,'center_y': 1.5}
-                            font_size: 25
+                            text: ''
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.507}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo0
                         min: 0
                         max: 180
+                        value: root.initial_value(0)
                         step: 1
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(0, self.value)
+                        
 
 
                 BoxLayout:
@@ -128,12 +170,24 @@
                     FloatLayout:
                         Label:
                             text: "SERVO 2"
-                            pos_hint: {'center_x':0.22,'center_y': 1.5}
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
                             font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
 
                         Label:
-                            text: "0°"
                             id: grados_servo1
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
                             font_size: 21
                             pos_hint: {'center_x':0.49,'center_y': 0.507}
                             background_color: (61/255, 61/255, 61/255, 1)
@@ -152,7 +206,13 @@
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(1)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(1, self.value)
 
 
@@ -188,7 +248,9 @@
                     FloatLayout:
                         Label:
                             text: "SERVO 3"
-                            pos_hint: {'center_x':0.32,'center_y': 0.9}
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
                             font_size: 25
                             canvas.before: 
                                 PushMatrix
@@ -200,8 +262,10 @@
                                 PopMatrix
 
                         Label:
-                            text: "0°"
                             id: grados_servo2
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
                             font_size: 21
                             pos_hint: {'center_x':0.49,'center_y': 0.507}
                             background_color: (61/255, 61/255, 61/255, 1)
@@ -220,7 +284,13 @@
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(2)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(2, self.value)
 
 
@@ -256,16 +326,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 4"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo3
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.507}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo3
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(3)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(3, self.value)
 
 
@@ -300,16 +404,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 5"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo4
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.47}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo4
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(4)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(4, self.value)
 
 
@@ -344,16 +482,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 6"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo5
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.47}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo5
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(5)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(5, self.value)
 
 
@@ -388,16 +560,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 7"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo6
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.47}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo6
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(6)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(6, self.value)
 
 
@@ -432,16 +638,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 8"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo7
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.47}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo7
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(7)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(7, self.value)
 
 
@@ -476,16 +716,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 9"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo8
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.425}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo8
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(8)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(8, self.value)
 
 
@@ -520,16 +794,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 10"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo9
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.425}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo9
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(9)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(9, self.value)
 
 
@@ -564,16 +872,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 11"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo10
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.425}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo10
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(10)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(10, self.value)
 
 
@@ -608,16 +950,50 @@
                     
                     FloatLayout:
                         Label:
-                            text: "0°"
+                            text: "SERVO 12"
+                            color: colorUVG
+                            bold: True
+                            pos_hint: {'center_x':0.32,'center_y': 0.5}
+                            font_size: 25
+                            canvas.before: 
+                                PushMatrix
+                                Rotate:
+                                    axis: 0,0,1
+                                    angle: 90
+                                    origin: self.center
+                            canvas.after: 
+                                PopMatrix
+
+                        Label:
                             id: grados_servo11
-                            pos_hint: {'center_x':0.5,'center_y': -0.2}
+                            text: "0°"
+                            color: (125/255, 194/255, 61/255, 1)
+                            bold: True
+                            font_size: 21
+                            pos_hint: {'center_x':0.49,'center_y': 0.425}
+                            background_color: (61/255, 61/255, 61/255, 1)
+                            size_hint: [None, None]
+                            width: 47
+                            height: 28
+                            canvas.before:
+                                Color:
+                                    rgba: self.background_color
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
                     
                     Slider:
                         id: slider_servo11
                         min: 0
                         max: 180
                         step: 1
+                        value: root.initial_value(11)
                         orientation: "horizontal"
+                        value_track: True
+                        value_track_color: colorUVG
+                        background_width: 35
+                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+                        cursor_size: [27,27]
                         on_value: root.slider_func(11, self.value)
 
 
