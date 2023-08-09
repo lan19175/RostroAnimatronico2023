@@ -38,7 +38,20 @@ class MainWindow(Screen):
 
 
 class MotorWindow(Screen):
-    pass
+    def servo_screen(self, row, col):
+        pos_extra_x = col*.192
+        pos_extra_y = row*.26
+        window_size = Window.size
+        x_pos = (pos_extra_x + .295) * window_size[0]
+        y_pos = (.71 - pos_extra_y) * window_size[1]
+        pos = [x_pos, y_pos]
+        return pos
+
+    def slider_func(self, no_servo, value):
+        id_text = "grados_servo" + str(no_servo)
+        id_angle = "servo_movible" + str(no_servo)
+        self.ids[str(id_text)].text = f'{int(value)}°'
+        self.ids[str(id_angle)].servo_angle = int(value)
 
 
 class MotorDataSettingWindow(Screen):
