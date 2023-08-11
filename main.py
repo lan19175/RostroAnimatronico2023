@@ -43,7 +43,7 @@ class MotorWindow(Screen):
         self.initial_values()
 
     def initial_values(self):
-        for i in range(11):
+        for i in range(12):
             id_slider = "slider_servo" + str(i)
             id_text = "grados_servo" + str(i)
             id_angle = "servo_movible" + str(i)
@@ -60,17 +60,19 @@ class MotorWindow(Screen):
         pos = [x_pos, y_pos]
         return pos
 
+    def servos_initial_value(self, no_servo):
+        value = [180, 50, 30, 90,
+                 55, 95, 150, 10,
+                 20, 160, 120, 45,
+                 70, 25, 37, 123,
+                 4, 175, 21]
+        return int(value[no_servo])
+
     def slider_func(self, no_servo, value):
         id_text = "grados_servo" + str(no_servo)
         id_angle = "servo_movible" + str(no_servo)
         self.ids[str(id_text)].text = f'{int(value)}°'
         self.ids[str(id_angle)].servo_angle = int(value)
-
-    def initial_value(self, no_servo):
-        value = [180, 50, 30, 90,
-                 55, 95, 150, 10,
-                 20, 160, 120, 45]
-        return int(value[no_servo])
 
 
 class MotorDataSettingWindow(Screen):

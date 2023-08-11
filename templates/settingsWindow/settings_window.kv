@@ -1,5 +1,6 @@
 #:kivy 1.0
 #:import Factory kivy.factory.Factory
+#: import FallOutTransition kivy.uix.screenmanager.FallOutTransition
 
 #:set colorUVG (0,141/255,54/255,1)
 
@@ -53,6 +54,8 @@
                     on_press: self.background_color = (.84, .02, .02, 1)
                     on_release: 
                         self.background_color = (1, 0, 0, 1)
+                        root.manager.transition = FallOutTransition()
+                        root.manager.transition.duration = .05
                         root.manager.transition.direction = "down"
                         app.root.current = "motor"
         

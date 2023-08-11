@@ -1,6 +1,100 @@
 #:kivy 1.0
 
+#: import RiseInTransition kivy.uix.screenmanager.RiseInTransition
+
 #:set colorUVG (0,141/255,54/255,1)
+#:set backgroundGeneral (204/255, 204/255, 204/255, 1)
+
+<BoxLayoutVertical@BoxLayout>:
+    orientation: "vertical"
+
+<ServosBoxLayout@BoxLayout>:
+    orientation:"horizontal"
+    size_hint: [1, None]
+    height: 450
+
+
+<ServoBoxLayout@BoxLayout>:
+    orientation: "vertical"
+    size_hint:[None, 1]
+    width: 450
+
+
+<SeparadorVertical@Label>:
+    text: ""
+    size_hint: [1, None]
+    height: 45
+
+
+<ServoBrazo@Image>:
+    pos_hint: {'center_x':0.48,'center_y': 0.17}
+    size_hint:[None,None]
+    size: [290,110]
+    source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
+    allow_stretch: True
+    keep_ratio: True
+    servo_angle: 0
+    canvas.before: 
+        PushMatrix
+        Rotate:
+            axis: 0,0,1
+            angle: self.servo_angle
+            origin: self.center
+    canvas.after: 
+        PopMatrix
+
+
+<ServoCuerpo@Image>:
+    pos_hint: {'center_x':0.535,'center_y': -0.152}
+    source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
+    size_hint: [None, None]
+    size: [250,250]
+
+
+<ServoNombre@Label>:
+    color: colorUVG
+    bold: True
+    pos_hint: {'center_x':0.32,'center_y': 0.5}
+    font_size: 25
+    canvas.before: 
+        PushMatrix
+        Rotate:
+            axis: 0,0,1
+            angle: 90
+            origin: self.center
+    canvas.after: 
+        PopMatrix
+
+
+<ServoGrados@Label>:
+    text: ''
+    color: (125/255, 194/255, 61/255, 1)
+    bold: True
+    font_size: 35
+    pos_hint: {'center_x':0.467,'center_y': 0.51}
+    background_color: (0, 0, 0, 1) # (61/255, 61/255, 61/255, 1)
+    size_hint: [None, None]
+    width: 81
+    height: 55
+    canvas.before:
+        Color:
+            rgba: self.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+
+<ServoSlider@Slider>:
+    min: 0
+    max: 180
+    step: 1
+    orientation: "horizontal"
+    value_track: True
+    value_track_color: colorUVG
+    value_track_width: 7
+    background_width: 60
+    cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+    cursor_size: [40,40]
 
 
 <MotorWindow>:
@@ -10,10 +104,9 @@
         cols: 2
         #background_color: (204/255, 204/255, 204/255, 1)
         #background_color: (161/255, 161/255, 161/255, 1)
-        background_color: (181/255, 181/255, 181/255, 1)
         canvas.before:
             Color:
-                rgba: self.background_color
+                rgba: backgroundGeneral
             Rectangle:
                 size: self.size
                 pos: self.pos
@@ -56,945 +149,261 @@
                     text: "Seleccionar Emoji"
 
             
-            GridLayout:
-                cols: 4
-                rows: 3
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(0,0)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible0
-                                pos_hint: {'center_x':0.5,'center_y': 0.17}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 1"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
+                size_hint_y: .8
+                size_hint_x: 1
 
-                        Label:
-                            id: grados_servo0
-                            text: ''
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.507}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo0
-                        min: 0
-                        max: 180
-                        value: root.initial_value(0)
-                        step: 1
+                GridLayout:
+                    size_hint: [1, None]
+                    height: self.minimum_height
+                    cols: 1
+                    rows: 14
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
                         orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(0, self.value)
-                        
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(0,1)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible1
-                                pos_hint: {'center_x':0.5,'center_y': 0.17}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 2"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
+                        ServoBoxLayout:
+                            id_servo: 0
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible0
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 1"
+                                ServoGrados:
+                                    id: grados_servo0
+                            ServoSlider:
+                                id: slider_servo0
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
 
                         Label:
-                            id: grados_servo1
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.507}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo1
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(1)
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 1
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible1
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 2"
+                                ServoGrados:
+                                    id: grados_servo1
+                            ServoSlider:
+                                id: slider_servo1
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                        Label:
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 2
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible2
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 3"
+                                ServoGrados:
+                                    id: grados_servo2
+                            ServoSlider:
+                                id: slider_servo2
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)                        
+
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
                         orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(1, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(0,2)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible2
-                                pos_hint: {'center_x':0.5,'center_y': 0.17}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 3"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
+                        ServoBoxLayout:
+                            id_servo: 3
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible3
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 4"
+                                ServoGrados:
+                                    id: grados_servo3
+                            ServoSlider:
+                                id: slider_servo3
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
 
                         Label:
-                            id: grados_servo2
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.507}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo2
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(2)
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 4
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible4
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 5"
+                                ServoGrados:
+                                    id: grados_servo4
+                            ServoSlider:
+                                id: slider_servo4
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                        Label:
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 5
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible5
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 6"
+                                ServoGrados:
+                                    id: grados_servo5
+                            ServoSlider:
+                                id: slider_servo5
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
                         orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(2, self.value)
-
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(0,3)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible3
-                                pos_hint: {'center_x':0.5,'center_y': 0.17}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 4"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
+                        ServoBoxLayout:
+                            id_servo: 6
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible6
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 7"
+                                ServoGrados:
+                                    id: grados_servo6
+                            ServoSlider:
+                                id: slider_servo6
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
 
                         Label:
-                            id: grados_servo3
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.507}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 7
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible7
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 8"
+                                ServoGrados:
+                                    id: grados_servo7
+                            ServoSlider:
+                                id: slider_servo7
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                        Label:
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 8
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible8
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 9"
+                                ServoGrados:
+                                    id: grados_servo8
+                            ServoSlider:
+                                id: slider_servo8
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
                     
-                    Slider:
-                        id: slider_servo3
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(3)
+                    SeparadorVertical:
+                    ServosBoxLayout:
                         orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(3, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(1,0)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible4
-                                pos_hint: {'center_x':0.5,'center_y': 0.11}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 5"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
+                        ServoBoxLayout:
+                            id_servo: 9
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible9
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 10"
+                                ServoGrados:
+                                    id: grados_servo9
+                            ServoSlider:
+                                id: slider_servo9
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
 
                         Label:
-                            id: grados_servo4
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.47}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo4
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(4)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(4, self.value)
+                            text:""
 
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(1,1)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible5
-                                pos_hint: {'center_x':0.5,'center_y': 0.11}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 6"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
+                        ServoBoxLayout:
+                            id_servo: 10
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible10
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 11"
+                                ServoGrados:
+                                    id: grados_servo10
+                            ServoSlider:
+                                id: slider_servo10
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
 
                         Label:
-                            id: grados_servo5
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.47}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 11
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible11
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 12"
+                                ServoGrados:
+                                    id: grados_servo11
+                            ServoSlider:
+                                id: slider_servo11
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
                     
-                    Slider:
-                        id: slider_servo5
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(5)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(5, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(1,2)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible6
-                                pos_hint: {'center_x':0.5,'center_y': 0.11}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 7"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
-
-                        Label:
-                            id: grados_servo6
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.47}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo6
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(6)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(6, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(1,3)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible7
-                                pos_hint: {'center_x':0.5,'center_y': 0.11}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 8"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
-
-                        Label:
-                            id: grados_servo7
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.47}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo7
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(7)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(7, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(2,0)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible8
-                                pos_hint: {'center_x':0.5,'center_y': 0.08}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 9"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
-
-                        Label:
-                            id: grados_servo8
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.425}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo8
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(8)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(8, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(2,1)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible9
-                                pos_hint: {'center_x':0.5,'center_y': 0.08}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 10"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
-
-                        Label:
-                            id: grados_servo9
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.425}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo9
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(9)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(9, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(2,2)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible10
-                                pos_hint: {'center_x':0.5,'center_y': 0.08}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 11"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
-
-                        Label:
-                            id: grados_servo10
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.425}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo10
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(10)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(10, self.value)
-
-
-                BoxLayout:
-                    orientation: "vertical"
-                    BoxLayout:
-                        orientation: "vertical"
-                        canvas.before:
-                            Rectangle:
-                                source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
-                                size: [150,150]
-                                pos: root.servo_screen(2,3)
-                        
-                        FloatLayout:
-                            Image:
-                                id: servo_movible11
-                                pos_hint: {'center_x':0.5,'center_y': 0.08}
-                                size_hint:[None,None]
-                                size: [180,90]
-                                source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
-                                allow_stretch: True
-                                keep_ratio: True
-                                servo_angle: 0
-                                canvas.before: 
-                                    PushMatrix
-                                    Rotate:
-                                        axis: 0,0,1
-                                        angle: self.servo_angle
-                                        origin: self.center
-                                canvas.after: 
-                                    PopMatrix
-                    
-                    FloatLayout:
-                        Label:
-                            text: "SERVO 12"
-                            color: colorUVG
-                            bold: True
-                            pos_hint: {'center_x':0.32,'center_y': 0.5}
-                            font_size: 25
-                            canvas.before: 
-                                PushMatrix
-                                Rotate:
-                                    axis: 0,0,1
-                                    angle: 90
-                                    origin: self.center
-                            canvas.after: 
-                                PopMatrix
-
-                        Label:
-                            id: grados_servo11
-                            text: "0°"
-                            color: (125/255, 194/255, 61/255, 1)
-                            bold: True
-                            font_size: 21
-                            pos_hint: {'center_x':0.49,'center_y': 0.425}
-                            background_color: (61/255, 61/255, 61/255, 1)
-                            size_hint: [None, None]
-                            width: 47
-                            height: 28
-                            canvas.before:
-                                Color:
-                                    rgba: self.background_color
-                                Rectangle:
-                                    size: self.size
-                                    pos: self.pos
-                    
-                    Slider:
-                        id: slider_servo11
-                        min: 0
-                        max: 180
-                        step: 1
-                        value: root.initial_value(11)
-                        orientation: "horizontal"
-                        value_track: True
-                        value_track_color: colorUVG
-                        background_width: 35
-                        cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
-                        cursor_size: [27,27]
-                        on_value: root.slider_func(11, self.value)
 
 
             BoxLayout:
@@ -1004,11 +413,24 @@
                     text: "Flecha izquierda"
 
                 Button:
-                    text: "Settings"
-                    font_sice: 32
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [70, 70]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/settings_release.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/settings_push.png'
                     on_release: 
+                        root.manager.transition = RiseInTransition()
+                        root.manager.transition.duration = .05
+                        self.image_source = 'templates/motorWindow/imagenes/settings_release.png'
                         app.root.current = "settings"
-                        root.manager.transition.direction = "up"
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
 
                 Label:
                     text: "Flecha derecha"                
