@@ -1,5 +1,5 @@
 #:kivy 1.0
-#:import Factory kivy.factory.Factory
+#: import Factory kivy.factory.Factory
 #: import FallOutTransition kivy.uix.screenmanager.FallOutTransition
 
 #:set colorUVG (0,141/255,54/255,1)
@@ -8,10 +8,10 @@
     background_color: (10/255, 132/255, 55/255, .8)
     font_size: 30
 
-
 <SettingWindow>:
-    name: "settings"
-
+    auto_dismiss: False
+    size_hint: [.7, .7]
+    title: "Configuración"
     BoxLayout:
         background_color: (204/255, 204/255, 204/255, 1)
         canvas.before:
@@ -54,15 +54,12 @@
                     on_press: self.background_color = (.84, .02, .02, 1)
                     on_release: 
                         self.background_color = (1, 0, 0, 1)
-                        root.manager.transition = FallOutTransition()
-                        root.manager.transition.duration = .05
-                        root.manager.transition.direction = "down"
-                        app.root.current = "motor"
+                        root.dismiss()
         
         Label:
             text: '' 
             size_hint: None, None
-            height: -150
+            height: -100
 
 
         GridLayout:
@@ -70,7 +67,7 @@
             Label:
                 text:''
                 size_hint: [None, None]
-                width: 400
+                width: 200
 
             Label:
                 pos_hint: {'center_x':0.5, 'center_y':0.5}
@@ -113,12 +110,12 @@
             Label:
                 text:''
                 size_hint: [None, None]
-                width: 400
+                width: 200
 
         Label:
             text: '' 
             size_hint: [None, None]
-            height: 150
+            height: 75
 
         Spinner:
             id: spinner_id

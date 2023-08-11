@@ -1,6 +1,8 @@
 #:kivy 1.0
 
 #: import RiseInTransition kivy.uix.screenmanager.RiseInTransition
+#: import SwapTransition kivy.uix.screenmanager.SwapTransition
+#: import Factory kivy.factory.Factory
 
 #:set colorUVG (0,141/255,54/255,1)
 #:set backgroundGeneral (204/255, 204/255, 204/255, 1)
@@ -30,7 +32,7 @@
     pos_hint: {'center_x':0.48,'center_y': 0.17}
     size_hint:[None,None]
     size: [290,110]
-    source: 'templates/motorWindow/imagenes/Servo_movil_v2.png'
+    source: 'templates/motorWindow/imagenes/SG90/Servo_movil_v2.png'
     allow_stretch: True
     keep_ratio: True
     servo_angle: 0
@@ -44,11 +46,33 @@
         PopMatrix
 
 
+<ServoBrazoAx@ServoBrazo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+    size: [330,150]
+    pos_hint: {'center_x':0.535,'center_y': 0.23}
+
+
+<ServoBrazoY4XL@ServoBrazo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+    size: [330,150]
+    pos_hint: {'center_x':0.53,'center_y': 0.23}
+
+
 <ServoCuerpo@Image>:
     pos_hint: {'center_x':0.535,'center_y': -0.152}
-    source: 'templates/motorWindow/imagenes/Servo_cuerpo.png'
+    source: 'templates/motorWindow/imagenes/SG90/Servo_cuerpo.png'
     size_hint: [None, None]
     size: [250,250]
+
+
+<ServoCuerpoAx@ServoCuerpo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
+    size: [280,280]
+
+
+<ServoCuerpoY4XL@ServoCuerpo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
+    size: [280,280]
 
 
 <ServoNombre@Label>:
@@ -72,7 +96,7 @@
     bold: True
     font_size: 35
     pos_hint: {'center_x':0.467,'center_y': 0.51}
-    background_color: (0, 0, 0, 1) # (61/255, 61/255, 61/255, 1)
+    background_color: (0, 0, 0, 1) 
     size_hint: [None, None]
     width: 81
     height: 55
@@ -82,6 +106,10 @@
         Rectangle:
             size: self.size
             pos: self.pos
+
+
+<ServoGradosAx@ServoGrados>:
+    pos_hint: {'center_x':0.535,'center_y': 0.5}
 
 
 <ServoSlider@Slider>:
@@ -96,6 +124,9 @@
     cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
     cursor_size: [40,40]
 
+
+<ServoSliderAx@ServoSlider>:
+    max: 300
 
 <MotorWindow>:
     on_pre_enter: root.initial_values()
@@ -405,12 +436,162 @@
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
                     
 
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        ServoBoxLayout:
+                            id_servo: 12
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoAx:
+                                    ServoBrazoAx:
+                                        id: servo_movible12
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 13"
+                                ServoGradosAx:
+                                    id: grados_servo12
+                            ServoSliderAx:
+                                id: slider_servo12
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                        Label:
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 13
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoAx:
+                                    ServoBrazoAx:
+                                        id: servo_movible13
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 14"
+                                ServoGradosAx:
+                                    id: grados_servo13
+                            ServoSliderAx:
+                                id: slider_servo13
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                        Label:
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 14
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoAx:
+                                    ServoBrazoAx:
+                                        id: servo_movible14
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 15"
+                                ServoGradosAx:
+                                    id: grados_servo14
+                            ServoSliderAx:
+                                id: slider_servo14
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                    
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        ServoBoxLayout:
+                            id_servo: 15
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible15
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 16"
+                                ServoGradosAx:
+                                    id: grados_servo15
+                            ServoSliderAx:
+                                id: slider_servo15
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                        Label:
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 16
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible16
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 17"
+                                ServoGradosAx:
+                                    id: grados_servo16
+                            ServoSliderAx:
+                                id: slider_servo16
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                        Label:
+                            text:""
+
+                        ServoBoxLayout:
+                            id_servo: 17
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible17
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 18"
+                                ServoGradosAx:
+                                    id: grados_servo17
+                            ServoSliderAx:
+                                id: slider_servo17
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                    
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        ServoBoxLayout:
+                            id_servo: 18
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible18
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 19"
+                                ServoGradosAx:
+                                    id: grados_servo18
+                            ServoSliderAx:
+                                id: slider_servo18
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                    
+
 
             BoxLayout:
                 orientation: "horizontal"
                 size_hint: [1,0.15]
+                background_color: (161/255, 161/255, 161/255, 1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
                 Label:
-                    text: "Flecha izquierda"
+                    text:""
 
                 Button:
                     background_normal: ''
@@ -419,18 +600,66 @@
                     size_hint: [None, None]
                     size: [70, 70]
                     pos_hint: {'center_x':0.5,'center_y': 0.5}
-                    image_source: 'templates/motorWindow/imagenes/settings_release.png'
+                    image_source: 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
                     on_press: 
-                        self.image_source = 'templates/motorWindow/imagenes/settings_push.png'
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda-press.png'
                     on_release: 
-                        root.manager.transition = RiseInTransition()
-                        root.manager.transition.duration = .05
-                        self.image_source = 'templates/motorWindow/imagenes/settings_release.png'
-                        app.root.current = "settings"
+                        #root.manager.transition = SwapTransition()
+                        #root.manager.transition.duration = .05
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
+                        root.manager.transition.direction = "right"
+                        app.root.current = "main"
                     Image: 
                         source: self.parent.image_source
                         center_x: self.parent.center_x
                         center_y: self.parent.center_y
 
                 Label:
-                    text: "Flecha derecha"                
+                    text:""
+                    size_hint: [0.2,1]
+
+                Button:
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [70, 70]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2_press.png'
+                    on_release: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                        Factory.SettingWindow().open()
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+                
+                Label:
+                    text:""
+                    size_hint: [0.2,1]
+
+                Button:
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [70, 70]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha-press.png'
+                    on_release: 
+                        #root.manager.transition = SwapTransition()
+                        #root.manager.transition.duration = .05
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
+                        root.manager.transition.direction = "left"
+                        app.root.current = "motorDataSetting"
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y  
+
+                Label:
+                    text:""           
