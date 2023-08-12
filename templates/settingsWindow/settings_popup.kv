@@ -61,7 +61,6 @@
             size_hint: None, None
             height: -100
 
-
         GridLayout:
             cols: 7
             Label:
@@ -83,11 +82,14 @@
             FloatLayout:
                 TextInput:
                     id: COM
+                    input_filter: "int"
                     pos_hint: {'center_x':0.5, 'center_y': 0.1}
-                    size_hint: None, None
-                    size: 95, 70
+                    size_hint: [None, None]
+                    size: [95, 70]
                     font_size: 45
-                    foreground_color: (13/255, 77/255, 78/255, 1)
+                    background_normal: "templates/motorWindow/imagenes/menu/text_input.png"
+                    background_active: "templates/motorWindow/imagenes/menu/text_input.png"
+                    foreground_color: (1, 1, 1, 1)
                     padding_x: [20,0]
             Label:
                 text:''

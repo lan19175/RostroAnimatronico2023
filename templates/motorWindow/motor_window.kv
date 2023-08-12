@@ -10,6 +10,7 @@
 <BoxLayoutVertical@BoxLayout>:
     orientation: "vertical"
 
+
 <ServosBoxLayout@BoxLayout>:
     orientation:"horizontal"
     size_hint: [1, None]
@@ -128,13 +129,12 @@
 <ServoSliderAx@ServoSlider>:
     max: 300
 
+
 <MotorWindow>:
     on_pre_enter: root.initial_values()
     name: "motor"
     GridLayout:
         cols: 2
-        #background_color: (204/255, 204/255, 204/255, 1)
-        #background_color: (161/255, 161/255, 161/255, 1)
         canvas.before:
             Color:
                 rgba: backgroundGeneral
@@ -160,30 +160,87 @@
 
         BoxLayout:
             orientation: "vertical"
-
+            Label:
+                text: ""
+                size_hint: [1, None]
+                height: 15
             BoxLayout:
                 orientation: "horizontal"
-                size_hint: [1,0.15]
+                size_hint: [1,0.11]
                 Button:
-                    text: "Boton Guardar"
-                    background_color: (1,0,0,1)
-                    canvas.before:
-                        Color:
-                            rgba: self.background_color
-                        Rectangle:
-                            size: self.size
-                            pos: self.pos
+                    id: guardar
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [70, 70]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/guardar.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/guardar-press.png'
+                    on_release: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/guardar.png'
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y  
                    
                 Label:
-                    text: "Nombre del Gesto"
+                    text: ""
+                    size_hint: [.2, 1]
+                
+                BoxLayout:
+                    orientation:"horizontal"
+                    size_hint: [None, 1]
+                    width: 575
+                    canvas.before:
+                        Color:
+                            rgba: colorUVG
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [15]
+                    Label:
+                        text: ""
+                        size_hint: [.05, 1]
+
+                    Label:
+                        text: "NOMBRE DEL GESTO:"
+                        size_hint: [None, 1]
+                        width: 290
+                        font_size: 30
+
+                    Label:
+                        text: ""
+                        size_hint: [.01, 1]
+
+                    TextInput:
+                        id: COM
+                        pos_hint: {'center_x':0.5, 'center_y': 0.5}
+                        size_hint: [None, None]
+                        size: [250, 60]
+                        background_normal: "templates/motorWindow/imagenes/menu/text_input.png"
+                        background_active: "templates/motorWindow/imagenes/menu/text_input.png"
+                        font_size: 27
+                        foreground_color: (1, 1, 1, 1)
+                        padding_y: [10,0]
+                        padding_x: [25,0]
+
+                    Label:
+                        text: ""
+                        size_hint: [.05, 1]
+
                 Label:
                     text: "Seleccionar Emoji"
-
+            
+            Label:
+                text: ""
+                size_hint: [1, None]
+                height: 15
             
             ScrollView:
                 do_scroll_y: True
                 do_scroll_x: False
-                size_hint_y: .8
                 size_hint_x: 1
 
                 GridLayout:
@@ -580,32 +637,38 @@
                     
 
 
+        FloatLayout:
+            size_hint: [None, 0.00001]
             BoxLayout:
+                pos: root.menu_pos()
                 orientation: "horizontal"
-                size_hint: [1,0.15]
-                background_color: (161/255, 161/255, 161/255, 1)
+                size_hint: [None,None]
+                width: 225
+                height: 70
+                background_color: (128/255, 128/255, 128/255, .5)
                 canvas.before:
                     Color:
                         rgba: self.background_color
-                    Rectangle:
+                    RoundedRectangle:
                         size: self.size
                         pos: self.pos
+                        radius: [15]
+
                 Label:
                     text:""
+                    size_hint: [0.1,1]
 
                 Button:
                     background_normal: ''
                     background_down: ''
                     background_color: backgroundGeneral
                     size_hint: [None, None]
-                    size: [70, 70]
+                    size: [50, 50]
                     pos_hint: {'center_x':0.5,'center_y': 0.5}
                     image_source: 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
                     on_press: 
                         self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda-press.png'
                     on_release: 
-                        #root.manager.transition = SwapTransition()
-                        #root.manager.transition.duration = .05
                         self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
                         root.manager.transition.direction = "right"
                         app.root.current = "main"
@@ -613,17 +676,18 @@
                         source: self.parent.image_source
                         center_x: self.parent.center_x
                         center_y: self.parent.center_y
+                        size: [60, 60]
 
                 Label:
                     text:""
                     size_hint: [0.2,1]
-
+                
                 Button:
                     background_normal: ''
                     background_down: ''
                     background_color: backgroundGeneral
                     size_hint: [None, None]
-                    size: [70, 70]
+                    size: [54, 54]
                     pos_hint: {'center_x':0.5,'center_y': 0.5}
                     image_source: 'templates/motorWindow/imagenes/menu/settings_v2.png'
                     on_press: 
@@ -635,6 +699,7 @@
                         source: self.parent.image_source
                         center_x: self.parent.center_x
                         center_y: self.parent.center_y
+                        size: [60, 60]
                 
                 Label:
                     text:""
@@ -645,21 +710,22 @@
                     background_down: ''
                     background_color: backgroundGeneral
                     size_hint: [None, None]
-                    size: [70, 70]
+                    size: [50, 50]
                     pos_hint: {'center_x':0.5,'center_y': 0.5}
                     image_source: 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
                     on_press: 
                         self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha-press.png'
                     on_release: 
-                        #root.manager.transition = SwapTransition()
-                        #root.manager.transition.duration = .05
                         self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
                         root.manager.transition.direction = "left"
                         app.root.current = "motorDataSetting"
                     Image: 
                         source: self.parent.image_source
                         center_x: self.parent.center_x
-                        center_y: self.parent.center_y  
-
+                        center_y: self.parent.center_y
+                        size: [60, 60] 
+                
                 Label:
-                    text:""           
+                    text:""
+                    size_hint: [0.1,1]
+      
