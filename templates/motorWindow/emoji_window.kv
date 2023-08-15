@@ -15,13 +15,13 @@
     background_color: colorUVG
     text:""
     font_size: 21
-    emoji: ""
     size_hint: [0.8, None]
-    heigth: 60
+    heigth: 60 
     on_press: 
         self.background_color = colorUVGPress
     on_release: 
         self.background_color = colorUVG
+        root.emoji_press()
 
 
 <EmojiButton@Button>:

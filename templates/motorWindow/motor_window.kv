@@ -7,6 +7,7 @@
 #:set colorUVG (0,141/255,54/255,1)
 #:set backgroundGeneral (204/255, 204/255, 204/255, 1)
 
+# Creación de clases
 <BoxLayoutVertical@BoxLayout>:
     orientation: "vertical"
 
@@ -130,6 +131,7 @@
     max: 300
 
 
+# Pantlla Motor
 <MotorWindow>:
     on_pre_enter: root.initial_values()
     name: "motor"
@@ -141,11 +143,14 @@
             Rectangle:
                 size: self.size
                 pos: self.pos
+        
+        # Despliegue de emojis guardados
         BoxLayout:
             id: control_emojis
             orientation: "vertical"
             size_hint: [0.3,1]
             image_source: 'templates/motorWindow/imagenes/emojis/feliz.png'
+            
             Label:
                 text:""
                 size_hint: [1, 0.05]
@@ -155,7 +160,7 @@
                 allow_stretch: True
                 keep_ratio: True
                 size_hint: [1, 0.4]
-            
+                pos_hint: {'center_x':0.43,'center_y': 0.7}
             ScrollView:
                 do_scroll_y: True
                 do_scroll_x: False
@@ -167,13 +172,49 @@
                     height: self.minimum_height
                     padding: [25, 5]
                     spacing: 25
-
-
-                    
-        
-
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint: [None, None]
+                size: [275, 50]
+                pos_hint: {'center_x':0.65}
+                background_color: (0,141/255,54/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [15]
+                
+                Label:
+                    text: ""
+                    size_hint: [None, 1]
+                    width: 10
+                Button:
+                    text: "REALIZAR GESTO"
+                    font_size: 30
+                    size_hint: [None, None]
+                    size: [250, 50]
+                    background_normal: ''
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
+                    on_press: 
+                        self.parent.background_color = colorUVGPress
+                    on_release: 
+                        self.parent.background_color = colorUVG
+                        root.send_gesto()
+                Label:
+                    text: ""
+                    size_hint: [None, 1]
+                    width: 10
+            Label:
+                text: ""
+                size_hint: [1, None]
+                height: 10
+        # Menu para emojis
         BoxLayout:
             orientation: "vertical"
+            
             Label:
                 text: ""
                 size_hint: [1, None]
@@ -181,9 +222,10 @@
             BoxLayout:
                 orientation: "horizontal"
                 size_hint: [1,0.11]
+                
                 Label:
                     text: ""
-                    size_hint: [.01, 1]
+                    size_hint: [.05, 1]
                 Button:
                     id: guardar
                     background_normal: ''
@@ -201,12 +243,11 @@
                     Image: 
                         source: self.parent.image_source
                         center_x: self.parent.center_x
-                        center_y: self.parent.center_y  
-                   
+                        center_y: self.parent.center_y   
                 Label:
                     text: ""
-                    size_hint: [.05, 1]
-                
+                    size_hint: [None, 1]
+                    width: 50
                 BoxLayout:
                     orientation:"horizontal"
                     size_hint: [None, 1]
@@ -218,20 +259,18 @@
                             size: self.size
                             pos: self.pos
                             radius: [15]
+                    
                     Label:
                         text: ""
                         size_hint: [.05, 1]
-
                     Label:
                         text: "NOMBRE DEL GESTO:"
                         size_hint: [None, 1]
                         width: 290
                         font_size: 30
-
                     Label:
                         text: ""
                         size_hint: [.01, 1]
-
                     TextInput:
                         id: nombre
                         pos_hint: {'center_x':0.5, 'center_y': 0.5}
@@ -243,19 +282,17 @@
                         foreground_color: (1, 1, 1, 1)
                         padding_y: [10,0]
                         padding_x: [25,0]
-
                     Label:
                         text: ""
                         size_hint: [.05, 1]
-
                 Label:
                     text: ""
-                    size_hint: [.05, 1]
-
+                    size_hint: [None, 1]
+                    width: 50
                 BoxLayout:
                     orientation: "horizontal"
                     size_hint: [None, 1]
-                    width: 350
+                    width: 450
                     background_color: (0,141/255,54/255,1)
                     canvas.before:
                         Color:
@@ -264,9 +301,11 @@
                             size: self.size
                             pos: self.pos
                             radius: [15]
+                    
                     Label:
-                        text:""
-                        size_hint: [0.1, 1]
+                        text: ""
+                        size_hint: [None, 1]
+                        width: 20
                     Button:
                         id: emoji
                         background_normal: ''
@@ -277,26 +316,29 @@
                         color: (1, 1, 1, 1)
                         size_hint: [None, None]
                         size_hint: [None, 1]
-                        width: 290
-                        pos_hint: {'center_x':0.5,'center_y': 0.5}
+                        width: 300
+                        pos_hint: {'center_x': 0.3}
+                        image_source: 'templates/motorWindow/imagenes/emojis/feliz.png'
+                        emoji_selected: "feliz"
                         on_press: 
                             self.parent.background_color = (0/255, 117/255, 45/255, 1)
                         on_release: 
                             self.parent.background_color = colorUVG
                             Factory.EmojiWindow().open()
-                    Label:
-                        text:""
-                        size_hint: [0.1, 1]
-                    
+                        Image: 
+                            source: self.parent.image_source
+                            center_x: self.parent.center_x + 210
+                            center_y: self.parent.center_y 
+                            size_hint: [None, None]
+                            size: [75, 75] 
                 Label:
                     text: ""
-                    size_hint: [.01, 1]
-            
+                    size_hint: [.05, 1]
             Label:
                 text: ""
                 size_hint: [1, None]
                 height: 15
-            
+            # Visualización de motores
             ScrollView:
                 do_scroll_y: True
                 do_scroll_x: False
@@ -308,6 +350,7 @@
                     cols: 1
                     rows: 14
 
+                    #SG1
                     SeparadorVertical:
                     ServosBoxLayout:
                         orientation: "horizontal"
@@ -327,10 +370,9 @@
                                 id: slider_servo0
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG2
                         ServoBoxLayout:
                             id_servo: 1
                             BoxLayoutVertical:
@@ -347,10 +389,9 @@
                                 id: slider_servo1
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG3
                         ServoBoxLayout:
                             id_servo: 2
                             BoxLayoutVertical:
@@ -366,12 +407,12 @@
                             ServoSlider:
                                 id: slider_servo2
                                 value: root.servos_initial_value(self.parent.id_servo)
-                                on_value: root.slider_func(self.parent.id_servo, self.value)                        
-
-
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                    
                     SeparadorVertical:
                     ServosBoxLayout:
                         orientation: "horizontal"
+                        #SG4
                         ServoBoxLayout:
                             id_servo: 3
                             BoxLayoutVertical:
@@ -388,10 +429,9 @@
                                 id: slider_servo3
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG5
                         ServoBoxLayout:
                             id_servo: 4
                             BoxLayoutVertical:
@@ -408,10 +448,9 @@
                                 id: slider_servo4
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG6
                         ServoBoxLayout:
                             id_servo: 5
                             BoxLayoutVertical:
@@ -429,10 +468,10 @@
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
 
-
                     SeparadorVertical:
                     ServosBoxLayout:
                         orientation: "horizontal"
+                        #SG7
                         ServoBoxLayout:
                             id_servo: 6
                             BoxLayoutVertical:
@@ -449,10 +488,9 @@
                                 id: slider_servo6
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG8
                         ServoBoxLayout:
                             id_servo: 7
                             BoxLayoutVertical:
@@ -469,10 +507,9 @@
                                 id: slider_servo7
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG9
                         ServoBoxLayout:
                             id_servo: 8
                             BoxLayoutVertical:
@@ -489,11 +526,11 @@
                                 id: slider_servo8
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                     
                     SeparadorVertical:
                     ServosBoxLayout:
                         orientation: "horizontal"
+                        #SG10
                         ServoBoxLayout:
                             id_servo: 9
                             BoxLayoutVertical:
@@ -510,10 +547,9 @@
                                 id: slider_servo9
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG11
                         ServoBoxLayout:
                             id_servo: 10
                             BoxLayoutVertical:
@@ -530,10 +566,9 @@
                                 id: slider_servo10
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #SG12
                         ServoBoxLayout:
                             id_servo: 11
                             BoxLayoutVertical:
@@ -550,11 +585,11 @@
                                 id: slider_servo11
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-                    
 
                     SeparadorVertical:
                     ServosBoxLayout:
                         orientation: "horizontal"
+                        #Servo1 AX-12A 
                         ServoBoxLayout:
                             id_servo: 12
                             BoxLayoutVertical:
@@ -571,10 +606,9 @@
                                 id: slider_servo12
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #Servo2 AX-12A 
                         ServoBoxLayout:
                             id_servo: 13
                             BoxLayoutVertical:
@@ -591,10 +625,9 @@
                                 id: slider_servo13
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #Servo3 AX-12A 
                         ServoBoxLayout:
                             id_servo: 14
                             BoxLayoutVertical:
@@ -611,11 +644,11 @@
                                 id: slider_servo14
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-                    
 
                     SeparadorVertical:
                     ServosBoxLayout:
                         orientation: "horizontal"
+                        #Servo1 XL-320 
                         ServoBoxLayout:
                             id_servo: 15
                             BoxLayoutVertical:
@@ -632,10 +665,9 @@
                                 id: slider_servo15
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #Servo2 XL-320 
                         ServoBoxLayout:
                             id_servo: 16
                             BoxLayoutVertical:
@@ -652,10 +684,9 @@
                                 id: slider_servo16
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-
                         Label:
                             text:""
-
+                        #Servo3 XL-320 
                         ServoBoxLayout:
                             id_servo: 17
                             BoxLayoutVertical:
@@ -672,11 +703,11 @@
                                 id: slider_servo17
                                 value: root.servos_initial_value(self.parent.id_servo)
                                 on_value: root.slider_func(self.parent.id_servo, self.value)
-                    
 
                     SeparadorVertical:
                     ServosBoxLayout:
                         orientation: "horizontal"
+                        #Servo4 XL-320 
                         ServoBoxLayout:
                             id_servo: 18
                             BoxLayoutVertical:
@@ -692,10 +723,8 @@
                             ServoSliderAx:
                                 id: slider_servo18
                                 value: root.servos_initial_value(self.parent.id_servo)
-                                on_value: root.slider_func(self.parent.id_servo, self.value)
-                    
-
-
+                                on_value: root.slider_func(self.parent.id_servo, self.value)           
+        # Menu entre pantallas
         FloatLayout:
             size_hint: [None, 0.00001]
             BoxLayout:
@@ -716,7 +745,6 @@
                 Label:
                     text:""
                     size_hint: [0.1,1]
-
                 Button:
                     background_normal: ''
                     background_down: ''
@@ -736,11 +764,9 @@
                         center_x: self.parent.center_x
                         center_y: self.parent.center_y
                         size: [60, 60]
-
                 Label:
                     text:""
                     size_hint: [0.2,1]
-                
                 Button:
                     background_normal: ''
                     background_down: ''
@@ -759,11 +785,9 @@
                         center_x: self.parent.center_x
                         center_y: self.parent.center_y
                         size: [60, 60]
-                
                 Label:
                     text:""
                     size_hint: [0.2,1]
-
                 Button:
                     background_normal: ''
                     background_down: ''
@@ -783,7 +807,6 @@
                         center_x: self.parent.center_x
                         center_y: self.parent.center_y
                         size: [60, 60] 
-                
                 Label:
                     text:""
                     size_hint: [0.1,1]
