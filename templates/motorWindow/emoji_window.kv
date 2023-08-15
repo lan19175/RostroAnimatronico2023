@@ -1,0 +1,123 @@
+#:kivy 1.0
+
+#: import Factory kivy.factory.Factory
+
+#:set backgroundGeneral (204/255, 204/255, 204/255, 1)
+#:set backgroundImagen (185/255, 185/255, 185/255, 0.6)
+#:set backgroundImagenPress (165/255, 165/255, 165/255, 0.6)
+#:set colorUVG (0,141/255,54/255,1)
+#:set colorUVGPress (0/255, 117/255, 45/255, 1)
+
+
+<EmojiOptions>:
+    background_normal: ''
+    background_down: ''
+    background_color: colorUVG
+    text:""
+    font_size: 21
+    emoji: ""
+    size_hint: [0.8, None]
+    heigth: 60
+    on_press: 
+        self.background_color = colorUVGPress
+    on_release: 
+        self.background_color = colorUVG
+
+
+<EmojiButton@Button>:
+    background_normal: ''
+    background_down: ''
+    background_color: backgroundImagen
+    size_hint: [None, None]
+    size: [70, 70]
+    pos_hint: {'center_x':0.5,'center_y': 0.5}
+    image_source: 'templates/motorWindow/imagenes/emojis/feliz.png'
+    emoji_id: 'feliz'
+    on_press: 
+        self.background_color = backgroundImagenPress
+    on_release:
+        app.root.popupreference.emoji_selected(self.emoji_id)
+        app.root.popupreference.dismiss()
+    
+        
+        
+    Image: 
+        source: self.parent.image_source
+        center_x: self.parent.center_x
+        center_y: self.parent.center_y
+        size: [self.parent.width-10, self.parent.height-10]
+
+
+<EmojiWindow>:
+    on_open: 
+        app.root.popupreference = self
+    auto_dismiss: False
+    size_hint: [None, None]
+    size: [520, 300]
+    pos_hint: {'center_x':0.85, 'center_y':0.72}
+    title: "SELECCIONA UN EMOJI"
+
+    GridLayout:
+        rows: 2
+
+        BoxLayout:
+            size_hint: [1, 0.5]
+            orientation:"horizontal"
+            padding: [10, 10]
+            spacing: 10
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/feliz.png'
+                emoji_id: "feliz"
+                
+
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/enojado.png'
+                emoji_id: "enojado"
+
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/triste.png'
+                emoji_id: "triste"
+            
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/sorprendido.png'
+                emoji_id: "sorprendido"
+            
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/llorando.png'
+                emoji_id: "llorando"
+            
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/disgusto.png'
+                emoji_id: "disgusto"
+        
+
+        BoxLayout:
+            size_hint: [1, 0.5]
+            orientation:"horizontal"
+            padding: [10, 10]
+            spacing: 10
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/poker.png'
+                emoji_id: "poker"
+                
+
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/ojos_llorosos.png'
+                emoji_id: "ojos_llorosos"
+
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/muerto_risa.png'
+                emoji_id: "muerto_risa"
+            
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/lagrimita.png'
+                emoji_id: "lagrimita"
+            
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/angelito.png'
+                emoji_id: "angelito"
+            
+            EmojiButton:
+                image_source: 'templates/motorWindow/imagenes/emojis/sunglasses.png'
+                emoji_id: "sunglasses"
+

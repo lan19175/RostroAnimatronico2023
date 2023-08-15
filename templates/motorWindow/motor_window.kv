@@ -142,20 +142,34 @@
                 size: self.size
                 pos: self.pos
         BoxLayout:
+            id: control_emojis
             orientation: "vertical"
             size_hint: [0.3,1]
-
+            image_source: 'templates/motorWindow/imagenes/emojis/feliz.png'
             Label:
-                text: "Motor Screen"
-                font_size: 32
+                text:""
+                size_hint: [1, 0.05]
+            Image:
+                id: despliegue_emoji
+                source: self.parent.image_source
+                allow_stretch: True
+                keep_ratio: True
+                size_hint: [1, 0.4]
             
-            Button:
-                text: "Go Back"
-                color: colorUVG
-                font_sice: 32
-                on_release: 
-                    app.root.current = "settings"
-                    root.manager.transition.direction = "left"
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
+                size_hint_x: 1
+                BoxLayout:
+                    id: emoji_options
+                    orientation: "vertical"
+                    size_hint: [1, None]
+                    height: self.minimum_height
+                    padding: [25, 5]
+                    spacing: 25
+
+
+                    
         
 
         BoxLayout:
@@ -167,6 +181,9 @@
             BoxLayout:
                 orientation: "horizontal"
                 size_hint: [1,0.11]
+                Label:
+                    text: ""
+                    size_hint: [.01, 1]
                 Button:
                     id: guardar
                     background_normal: ''
@@ -180,6 +197,7 @@
                         self.image_source = 'templates/motorWindow/imagenes/menu/guardar-press.png'
                     on_release: 
                         self.image_source = 'templates/motorWindow/imagenes/menu/guardar.png'
+                        root.guardar_emoji()
                     Image: 
                         source: self.parent.image_source
                         center_x: self.parent.center_x
@@ -187,7 +205,7 @@
                    
                 Label:
                     text: ""
-                    size_hint: [.2, 1]
+                    size_hint: [.05, 1]
                 
                 BoxLayout:
                     orientation:"horizontal"
@@ -215,7 +233,7 @@
                         size_hint: [.01, 1]
 
                     TextInput:
-                        id: COM
+                        id: nombre
                         pos_hint: {'center_x':0.5, 'center_y': 0.5}
                         size_hint: [None, None]
                         size: [250, 60]
@@ -231,7 +249,48 @@
                         size_hint: [.05, 1]
 
                 Label:
-                    text: "Seleccionar Emoji"
+                    text: ""
+                    size_hint: [.05, 1]
+
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint: [None, 1]
+                    width: 350
+                    background_color: (0,141/255,54/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [15]
+                    Label:
+                        text:""
+                        size_hint: [0.1, 1]
+                    Button:
+                        id: emoji
+                        background_normal: ''
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
+                        text: "SELECCIONAR EMOJI"
+                        font_size: 30
+                        color: (1, 1, 1, 1)
+                        size_hint: [None, None]
+                        size_hint: [None, 1]
+                        width: 290
+                        pos_hint: {'center_x':0.5,'center_y': 0.5}
+                        on_press: 
+                            self.parent.background_color = (0/255, 117/255, 45/255, 1)
+                        on_release: 
+                            self.parent.background_color = colorUVG
+                            Factory.EmojiWindow().open()
+                    Label:
+                        text:""
+                        size_hint: [0.1, 1]
+                    
+                Label:
+                    text: ""
+                    size_hint: [.01, 1]
             
             Label:
                 text: ""
