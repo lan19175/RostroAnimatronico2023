@@ -1,19 +1,813 @@
 #:kivy 1.0
 
+#: import RiseInTransition kivy.uix.screenmanager.RiseInTransition
+#: import SwapTransition kivy.uix.screenmanager.SwapTransition
+#: import Factory kivy.factory.Factory
+
+#:set colorUVG (0,141/255,54/255,1)
+#:set backgroundGeneral (204/255, 204/255, 204/255, 1)
+
+# Creación de clases
+<BoxLayoutVertical@BoxLayout>:
+    orientation: "vertical"
+
+
+<ServosBoxLayout@BoxLayout>:
+    orientation:"horizontal"
+    size_hint: [1, None]
+    height: 450
+
+
+<ServoBoxLayout@BoxLayout>:
+    orientation: "vertical"
+    size_hint:[None, 1]
+    width: 450
+
+
+<SeparadorVertical@Label>:
+    text: ""
+    size_hint: [1, None]
+    height: 45
+
+
+<ServoBrazo@Image>:
+    pos_hint: {'center_x':0.48,'center_y': 0.17}
+    size_hint:[None,None]
+    size: [290,110]
+    source: 'templates/motorWindow/imagenes/SG90/Servo_movil_v2.png'
+    allow_stretch: True
+    keep_ratio: True
+    servo_angle: 0
+    canvas.before: 
+        PushMatrix
+        Rotate:
+            axis: 0,0,1
+            angle: self.servo_angle
+            origin: self.center
+    canvas.after: 
+        PopMatrix
+
+
+<ServoBrazoAx@ServoBrazo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+    size: [330,150]
+    pos_hint: {'center_x':0.535,'center_y': 0.23}
+
+
+<ServoBrazoY4XL@ServoBrazo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+    size: [330,150]
+    pos_hint: {'center_x':0.53,'center_y': 0.23}
+
+
+<ServoCuerpo@Image>:
+    pos_hint: {'center_x':0.535,'center_y': -0.152}
+    source: 'templates/motorWindow/imagenes/SG90/Servo_cuerpo.png'
+    size_hint: [None, None]
+    size: [250,250]
+
+
+<ServoCuerpoAx@ServoCuerpo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
+    size: [280,280]
+
+
+<ServoCuerpoY4XL@ServoCuerpo>:
+    source: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
+    size: [280,280]
+
+
+<ServoNombre@Label>:
+    color: colorUVG
+    bold: True
+    pos_hint: {'center_x':0.32,'center_y': 0.5}
+    font_size: 25
+    canvas.before: 
+        PushMatrix
+        Rotate:
+            axis: 0,0,1
+            angle: 90
+            origin: self.center
+    canvas.after: 
+        PopMatrix
+
+
+<ServoGrados@Label>:
+    text: ''
+    color: (125/255, 194/255, 61/255, 1)
+    bold: True
+    font_size: 35
+    pos_hint: {'center_x':0.467,'center_y': 0.51}
+    background_color: (0, 0, 0, 1) 
+    size_hint: [None, None]
+    width: 81
+    height: 55
+    canvas.before:
+        Color:
+            rgba: self.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+
+<ServoGradosAx@ServoGrados>:
+    pos_hint: {'center_x':0.535,'center_y': 0.5}
+
+
+<ServoSlider@Slider>:
+    min: 0
+    max: 180
+    step: 1
+    orientation: "horizontal"
+    value_track: True
+    value_track_color: colorUVG
+    value_track_width: 7
+    background_width: 60
+    cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+    cursor_size: [40,40]
+
+
+<ServoSliderAx@ServoSlider>:
+    max: 300
+
+
+# Pantlla Motor
 <MotorWindow>:
+    on_pre_enter: root.initial_values()
     name: "motor"
-
-    BoxLayout:
-        orientation: "vertical"
-        size: root.width, root.height
-
-        Label:
-            text: "Motor Screen"
-            font_size: 32
+    GridLayout:
+        cols: 2
+        canvas.before:
+            Color:
+                rgba: backgroundGeneral
+            Rectangle:
+                size: self.size
+                pos: self.pos
         
-        Button:
-            text: "Go Back"
-            font_sice: 32
-            on_release: 
-                app.root.current = "motorDataSetting"
-                root.manager.transition.direction = "left"
+        # Despliegue de emojis guardados
+        BoxLayout:
+            id: control_emojis
+            orientation: "vertical"
+            size_hint: [0.3,1]
+            image_source: 'templates/motorWindow/imagenes/emojis/feliz.png'
+            
+            Label:
+                text:""
+                size_hint: [1, 0.05]
+            Image:
+                id: despliegue_emoji
+                source: self.parent.image_source
+                allow_stretch: True
+                keep_ratio: True
+                size_hint: [1, 0.4]
+                pos_hint: {'center_x':0.43,'center_y': 0.7}
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
+                size_hint_x: 1
+                BoxLayout:
+                    id: emoji_options
+                    orientation: "vertical"
+                    size_hint: [1, None]
+                    height: self.minimum_height
+                    padding: [25, 5]
+                    spacing: 25
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint: [None, None]
+                size: [275, 50]
+                pos_hint: {'center_x':0.65}
+                background_color: (0,141/255,54/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [15]
+                
+                Label:
+                    text: ""
+                    size_hint: [None, 1]
+                    width: 10
+                Button:
+                    text: "REALIZAR GESTO"
+                    font_size: 30
+                    size_hint: [None, None]
+                    size: [250, 50]
+                    background_normal: ''
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
+                    on_press: 
+                        self.parent.background_color = colorUVGPress
+                    on_release: 
+                        self.parent.background_color = colorUVG
+                        root.send_gesto()
+                Label:
+                    text: ""
+                    size_hint: [None, 1]
+                    width: 10
+            Label:
+                text: ""
+                size_hint: [1, None]
+                height: 10
+        # Menu para emojis
+        BoxLayout:
+            orientation: "vertical"
+            
+            Label:
+                text: ""
+                size_hint: [1, None]
+                height: 15
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint: [1,0.11]
+                
+                Label:
+                    text: ""
+                    size_hint: [.05, 1]
+                Button:
+                    id: guardar
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [70, 70]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/guardar.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/guardar-press.png'
+                    on_release: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/guardar.png'
+                        root.guardar_emoji()
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y   
+                Label:
+                    text: ""
+                    size_hint: [None, 1]
+                    width: 50
+                BoxLayout:
+                    orientation:"horizontal"
+                    size_hint: [None, 1]
+                    width: 575
+                    canvas.before:
+                        Color:
+                            rgba: colorUVG
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [15]
+                    
+                    Label:
+                        text: ""
+                        size_hint: [.05, 1]
+                    Label:
+                        text: "NOMBRE DEL GESTO:"
+                        size_hint: [None, 1]
+                        width: 290
+                        font_size: 30
+                    Label:
+                        text: ""
+                        size_hint: [.01, 1]
+                    TextInput:
+                        id: nombre
+                        pos_hint: {'center_x':0.5, 'center_y': 0.5}
+                        size_hint: [None, None]
+                        size: [250, 60]
+                        background_normal: "templates/motorWindow/imagenes/menu/text_input.png"
+                        background_active: "templates/motorWindow/imagenes/menu/text_input.png"
+                        font_size: 27
+                        foreground_color: (1, 1, 1, 1)
+                        padding_y: [10,0]
+                        padding_x: [25,0]
+                    Label:
+                        text: ""
+                        size_hint: [.05, 1]
+                Label:
+                    text: ""
+                    size_hint: [None, 1]
+                    width: 50
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint: [None, 1]
+                    width: 450
+                    background_color: (0,141/255,54/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [15]
+                    
+                    Label:
+                        text: ""
+                        size_hint: [None, 1]
+                        width: 20
+                    Button:
+                        id: emoji
+                        background_normal: ''
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
+                        text: "SELECCIONAR EMOJI"
+                        font_size: 30
+                        color: (1, 1, 1, 1)
+                        size_hint: [None, None]
+                        size_hint: [None, 1]
+                        width: 300
+                        pos_hint: {'center_x': 0.3}
+                        image_source: 'templates/motorWindow/imagenes/emojis/feliz.png'
+                        emoji_selected: "feliz"
+                        on_press: 
+                            self.parent.background_color = (0/255, 117/255, 45/255, 1)
+                        on_release: 
+                            self.parent.background_color = colorUVG
+                            Factory.EmojiWindow().open()
+                        Image: 
+                            source: self.parent.image_source
+                            center_x: self.parent.center_x + 210
+                            center_y: self.parent.center_y 
+                            size_hint: [None, None]
+                            size: [75, 75] 
+                Label:
+                    text: ""
+                    size_hint: [.05, 1]
+            Label:
+                text: ""
+                size_hint: [1, None]
+                height: 15
+            # Visualización de motores
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
+                size_hint_x: 1
+
+                GridLayout:
+                    size_hint: [1, None]
+                    height: self.minimum_height
+                    cols: 1
+                    rows: 14
+
+                    #SG1
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        ServoBoxLayout:
+                            id_servo: 0
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible0
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 1"
+                                ServoGrados:
+                                    id: grados_servo0
+                            ServoSlider:
+                                id: slider_servo0
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG2
+                        ServoBoxLayout:
+                            id_servo: 1
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible1
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 2"
+                                ServoGrados:
+                                    id: grados_servo1
+                            ServoSlider:
+                                id: slider_servo1
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG3
+                        ServoBoxLayout:
+                            id_servo: 2
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible2
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 3"
+                                ServoGrados:
+                                    id: grados_servo2
+                            ServoSlider:
+                                id: slider_servo2
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                    
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        #SG4
+                        ServoBoxLayout:
+                            id_servo: 3
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible3
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 4"
+                                ServoGrados:
+                                    id: grados_servo3
+                            ServoSlider:
+                                id: slider_servo3
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG5
+                        ServoBoxLayout:
+                            id_servo: 4
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible4
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 5"
+                                ServoGrados:
+                                    id: grados_servo4
+                            ServoSlider:
+                                id: slider_servo4
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG6
+                        ServoBoxLayout:
+                            id_servo: 5
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible5
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 6"
+                                ServoGrados:
+                                    id: grados_servo5
+                            ServoSlider:
+                                id: slider_servo5
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        #SG7
+                        ServoBoxLayout:
+                            id_servo: 6
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible6
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 7"
+                                ServoGrados:
+                                    id: grados_servo6
+                            ServoSlider:
+                                id: slider_servo6
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG8
+                        ServoBoxLayout:
+                            id_servo: 7
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible7
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 8"
+                                ServoGrados:
+                                    id: grados_servo7
+                            ServoSlider:
+                                id: slider_servo7
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG9
+                        ServoBoxLayout:
+                            id_servo: 8
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible8
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 9"
+                                ServoGrados:
+                                    id: grados_servo8
+                            ServoSlider:
+                                id: slider_servo8
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                    
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        #SG10
+                        ServoBoxLayout:
+                            id_servo: 9
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible9
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 10"
+                                ServoGrados:
+                                    id: grados_servo9
+                            ServoSlider:
+                                id: slider_servo9
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG11
+                        ServoBoxLayout:
+                            id_servo: 10
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible10
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 11"
+                                ServoGrados:
+                                    id: grados_servo10
+                            ServoSlider:
+                                id: slider_servo10
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #SG12
+                        ServoBoxLayout:
+                            id_servo: 11
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible11
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 12"
+                                ServoGrados:
+                                    id: grados_servo11
+                            ServoSlider:
+                                id: slider_servo11
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        #Servo1 AX-12A 
+                        ServoBoxLayout:
+                            id_servo: 12
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoAx:
+                                    ServoBrazoAx:
+                                        id: servo_movible12
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 13"
+                                ServoGradosAx:
+                                    id: grados_servo12
+                            ServoSliderAx:
+                                id: slider_servo12
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #Servo2 AX-12A 
+                        ServoBoxLayout:
+                            id_servo: 13
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoAx:
+                                    ServoBrazoAx:
+                                        id: servo_movible13
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 14"
+                                ServoGradosAx:
+                                    id: grados_servo13
+                            ServoSliderAx:
+                                id: slider_servo13
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #Servo3 AX-12A 
+                        ServoBoxLayout:
+                            id_servo: 14
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoAx:
+                                    ServoBrazoAx:
+                                        id: servo_movible14
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 15"
+                                ServoGradosAx:
+                                    id: grados_servo14
+                            ServoSliderAx:
+                                id: slider_servo14
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        #Servo1 XL-320 
+                        ServoBoxLayout:
+                            id_servo: 15
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible15
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 16"
+                                ServoGradosAx:
+                                    id: grados_servo15
+                            ServoSliderAx:
+                                id: slider_servo15
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #Servo2 XL-320 
+                        ServoBoxLayout:
+                            id_servo: 16
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible16
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 17"
+                                ServoGradosAx:
+                                    id: grados_servo16
+                            ServoSliderAx:
+                                id: slider_servo16
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        Label:
+                            text:""
+                        #Servo3 XL-320 
+                        ServoBoxLayout:
+                            id_servo: 17
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible17
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 18"
+                                ServoGradosAx:
+                                    id: grados_servo17
+                            ServoSliderAx:
+                                id: slider_servo17
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        #Servo4 XL-320 
+                        ServoBoxLayout:
+                            id_servo: 18
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpoY4XL:
+                                    ServoBrazoY4XL:
+                                        id: servo_movible18
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 19"
+                                ServoGradosAx:
+                                    id: grados_servo18
+                            ServoSliderAx:
+                                id: slider_servo18
+                                value: root.servos_initial_value(self.parent.id_servo)
+                                on_value: root.slider_func(self.parent.id_servo, self.value)           
+        # Menu entre pantallas
+        FloatLayout:
+            size_hint: [None, 0.00001]
+            BoxLayout:
+                pos: root.menu_pos()
+                orientation: "horizontal"
+                size_hint: [None,None]
+                width: 225
+                height: 70
+                background_color: (128/255, 128/255, 128/255, .5)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [15]
+
+                Label:
+                    text:""
+                    size_hint: [0.1,1]
+                Button:
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [50, 50]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda-press.png'
+                    on_release: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
+                        root.manager.transition.direction = "right"
+                        app.root.current = "main"
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+                        size: [60, 60]
+                Label:
+                    text:""
+                    size_hint: [0.2,1]
+                Button:
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [54, 54]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2_press.png'
+                    on_release: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                        Factory.SettingWindow().open()
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+                        size: [60, 60]
+                Label:
+                    text:""
+                    size_hint: [0.2,1]
+                Button:
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [50, 50]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha-press.png'
+                    on_release: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
+                        root.manager.transition.direction = "left"
+                        app.root.current = "motorDataSetting"
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+                        size: [60, 60] 
+                Label:
+                    text:""
+                    size_hint: [0.1,1]
+      

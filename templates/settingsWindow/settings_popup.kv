@@ -1,18 +1,19 @@
 #:kivy 1.0
-#:import Factory kivy.factory.Factory
+#: import Factory kivy.factory.Factory
+#: import FallOutTransition kivy.uix.screenmanager.FallOutTransition
 
 #:set colorUVG (0,141/255,54/255,1)
 
 <CustomSpinnerOptions@SpinnerOption>:
-    background_color: [10/255, 132/255, 55/255, .8]
+    background_color: (10/255, 132/255, 55/255, .8)
     font_size: 30
 
-
 <SettingWindow>:
-    name: "settings"
-
+    auto_dismiss: False
+    size_hint: [.7, .7]
+    title: "Configuración"
     BoxLayout:
-        background_color: 204/255,204/255,204/255,1
+        background_color: (204/255, 204/255, 204/255, 1)
         canvas.before:
             Color:
                 rgba: self.background_color
@@ -45,34 +46,32 @@
                     id: exit_settings
                     background_normal: ''
                     background_down: ''
-                    background_color: .96, .23, .23, 1
+                    background_color: (.96, .23, .23, 1)
                     text: "X"
                     font_size: 40
                     size_hint:[None,None]
                     size: [70,35]
-                    on_press: self.background_color = .84,.02,.02,1
+                    on_press: self.background_color = (.84, .02, .02, 1)
                     on_release: 
-                        self.background_color = 1, 0, 0, 1
-                        root.manager.transition.direction = "down"
-                        app.root.current = "main"
+                        self.background_color = (1, 0, 0, 1)
+                        root.dismiss()
         
         Label:
             text: '' 
             size_hint: None, None
-            height: -150
-
+            height: -100
 
         GridLayout:
             cols: 7
             Label:
                 text:''
-                size_hint: None, None
-                width: 400
+                size_hint: [None, None]
+                width: 200
 
             Label:
-                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                pos_hint: {'center_x':0.5, 'center_y':0.5}
                 size_hint: None, None
-                size: 500, 50
+                size: [500, 50]
                 text: "     Ingrese el port para \nconectarse con el Rostro"
                 font_size: 45
                 color: colorUVG
@@ -83,15 +82,18 @@
             FloatLayout:
                 TextInput:
                     id: COM
-                    pos_hint: {'center_x':0.5,'center_y': 0.1}
-                    size_hint: None, None
-                    size: 95, 70
+                    input_filter: "int"
+                    pos_hint: {'center_x':0.5, 'center_y': 0.1}
+                    size_hint: [None, None]
+                    size: [95, 70]
                     font_size: 45
-                    foreground_color: (13/255, 77/255, 78/255, 1)
-                    padding_x:[20,0]
+                    background_normal: "templates/motorWindow/imagenes/menu/text_input.png"
+                    background_active: "templates/motorWindow/imagenes/menu/text_input.png"
+                    foreground_color: (1, 1, 1, 1)
+                    padding_x: [20,0]
             Label:
                 text:''
-                size_hint: None, None
+                size_hint: [None, None]
                 width: 75
             
             FloatLayout:
@@ -100,22 +102,22 @@
                     background_normal: ''
                     background_down: ''
                     background_color: colorUVG
-                    color: (1,1,1,1)
+                    color: (1, 1, 1, 1)
                     text: "Conectar"
                     font_size: 40
-                    size_hint: None, None
-                    size: [200,50]
-                    pos_hint: {'center_x': 0.5,'center_y': 0.1}
+                    size_hint: [None, None]
+                    size: [200, 50]
+                    pos_hint: {'center_x':0.5, 'center_y':0.1}
 
             Label:
                 text:''
-                size_hint: None, None
-                width: 400
+                size_hint: [None, None]
+                width: 200
 
         Label:
             text: '' 
-            size_hint: None, None
-            height: 150
+            size_hint: [None, None]
+            height: 75
 
         Spinner:
             id: spinner_id
@@ -123,7 +125,7 @@
             background_down: ''
             background_color: colorUVG
             pos_hint: {'center_x':0.5}
-            size_hint: 0.6, None
+            size_hint: [0.6, None]
             height: 70
             text: "Seleccione su cámara"
             font_size: 45
