@@ -1,19 +1,250 @@
 #:kivy 1.0
 
+#: import Factory kivy.factory.Factory
+
+#:set backgroundGeneral (204/255, 204/255, 204/255, 1)
+#:set colorUVG (0,141/255,54/255,1)
+
+<MinMaxLayout>:
+    orientation:"horizontal"
+    size_hint: [1, None]
+    height: 100
+    SeparadorHorizontal:
+        width: 15
+    BoxLayout:
+        orientation: "vertical"
+        size_hint: [None, 1]
+        width: 95
+        Label:
+            text: "MIN"
+            font_size: 30
+        TextInput:
+            size_hint: [None, None]
+            size: [95, 70]
+            input_filter: "int"
+            font_size: 28
+            foreground_color: (1, 1, 1, 1)
+            padding_x: [29,0]
+            padding_y: [20,0]
+            background_normal: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+            background_active: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+            text: root.min_val
+            multiline: False
+            on_text_validate: root.on_value(self.text, "min")
+    Label:
+        text: ""
+    BoxLayout:
+        orientation: "vertical"
+        size_hint: [None, 1]
+        width: 95
+        Label:
+            text: "MAX"
+            font_size: 30
+        TextInput:
+            size_hint: [None, None]
+            size: [95, 70]
+            input_filter: "int"
+            font_size: 28
+            foreground_color: (1, 1, 1, 1)
+            padding_x: [20,0]
+            padding_y: [20,0]
+            background_normal: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+            background_active: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+            text: root.max_val
+            multiline: False
+            on_text_validate: root.on_value(self.text, "max")
+    SeparadorHorizontal:
+        width: 15
+
+
+<ServoSliderMinMax@ServoSlider>:
+    value: 90
+
+
+<SeparadorHorizontal@Label>:
+    text: ""
+    size_hint: [None, 1]
+    width: 50
+
+
 <MotorDataSettingWindow>:
     name: "motorDataSetting"
 
-    BoxLayout:
-        orientation: "vertical"
-        size: root.width, root.height
+    GridLayout:
+        cols: 2
+        canvas.before:
+            Color:
+                rgba: backgroundGeneral
+            Rectangle:
+                size: self.size
+                pos: self.pos
 
-        Label:
-            text: "Motor Setting Screen"
-            font_size: 32
-        
-        Button:
-            text: "Go Back"
-            font_sice: 32
-            on_release: 
-                app.root.current = "motor"
-                root.manager.transition.direction = "right"
+        BoxLayoutVertical:
+            size_hint: [0.63, 1]
+            
+            SeparadorVertical:
+            BoxLayout:
+                orientation:"horizontal"
+                size_hint: [1, None]
+                height: 90
+                SeparadorHorizontal:
+                Button:
+                    id: guardar
+                    background_normal: ''
+                    background_down: ''
+                    background_color: backgroundGeneral
+                    size_hint: [None, None]
+                    size: [70, 70]
+                    pos_hint: {'center_x':0.5,'center_y': 0.5}
+                    image_source: 'templates/motorWindow/imagenes/menu/guardar.png'
+                    on_press: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/guardar-press.png'
+                    on_release: 
+                        self.image_source = 'templates/motorWindow/imagenes/menu/guardar.png'
+                        root.guardar_min_max()
+                    Image: 
+                        source: self.parent.image_source
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y   
+                Label:
+                    text: "MODIFICACIÓN MÁXIMOS Y MÍMOS PARA LOS MOTORES"
+                    font_size: 35
+                    bold: True
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
+                
+                GridLayout:
+                    size_hint: [1, None]
+                    height: self.minimum_height
+                    cols: 1
+                    rows: 14
+                    
+                    #SG1
+                    SeparadorVertical:
+                    ServosBoxLayout:
+                        orientation: "horizontal"
+                        ServoBoxLayout:
+                            id_servo: 0
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible0
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 1"
+                                ServoGrados:
+                                    id: grados_servo0
+                                    pos_hint: {'center_x':0.467,'center_y': 0.53}
+                            SeparadorVertical:
+                                height: -110
+                            MinMaxLayout:
+                                id: min_max0
+                            SeparadorVertical:
+                                height: -15
+                            ServoSliderMinMax:
+                                id: slider_servo0
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                        ServoBoxLayout:
+                            id_servo: 1
+                            BoxLayoutVertical:
+                                FloatLayout:
+                                    ServoCuerpo:
+                                    ServoBrazo:
+                                        id: servo_movible1
+                            FloatLayout:
+                                ServoNombre:
+                                    text: "SERVO 2"
+                                ServoGrados:
+                                    id: grados_servo1
+                                    pos_hint: {'center_x':0.467,'center_y': 0.53}
+                            SeparadorVertical:
+                                height: -110
+                            MinMaxLayout:
+                                id: min_max1
+                            SeparadorVertical:
+                                height: -15
+                            ServoSliderMinMax:
+                                id: slider_servo1
+                                on_value: root.slider_func(self.parent.id_servo, self.value)
+        BoxLayout:
+            orientation:"vertical"
+            size_hint: [0.37, 1]
+            canvas.before:
+                Color:
+                    rgba: (1, 0, 0, 1)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            Label:
+                text: "Titulo"
+            Label:
+                text: "Modificación para base de datos"
+            Label:
+                text: "Nuevo para base de datos"
+            # Menu entre pantallas
+            FloatLayout:
+                size_hint: [None, 0.00001]
+                BoxLayout:
+                    pos: [Factory.MotorWindow().menu_pos()+75, 15]
+                    orientation: "horizontal"
+                    size_hint: [None,None]
+                    width: 160
+                    height: 70
+                    background_color: (128/255, 128/255, 128/255, .5)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [15]
+
+                    Label:
+                        text:""
+                        size_hint: [0.1,1]
+                    Button:
+                        background_normal: ''
+                        background_down: ''
+                        background_color: backgroundGeneral
+                        size_hint: [None, None]
+                        size: [48, 48]
+                        pos_hint: {'center_x':0.5,'center_y': 0.5}
+                        image_source: 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
+                        on_press: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda-press.png'
+                        on_release: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
+                            root.manager.transition.direction = "right"
+                            app.root.current = "motor"
+                        Image: 
+                            source: self.parent.image_source
+                            center_x: self.parent.center_x
+                            center_y: self.parent.center_y
+                            size: [60, 60]
+                    Label:
+                        text:""
+                        size_hint: [0.2,1]
+                    Button:
+                        background_normal: ''
+                        background_down: ''
+                        background_color: backgroundGeneral
+                        size_hint: [None, None]
+                        size: [54, 54]
+                        pos_hint: {'center_x':0.5,'center_y': 0.5}
+                        image_source: 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                        on_press: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2_press.png'
+                        on_release: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                            Factory.SettingWindow().open()
+                        Image: 
+                            source: self.parent.image_source
+                            center_x: self.parent.center_x
+                            center_y: self.parent.center_y
+                            size: [60, 60]
+                    
+                    Label:
+                        text:""
+                        size_hint: [0.1,1]

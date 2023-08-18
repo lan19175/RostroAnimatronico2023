@@ -2,6 +2,7 @@ from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.core.window import Window
 from pygrabber.dshow_graph import FilterGraph
@@ -215,8 +216,7 @@ class MotorWindow(Screen):
     def menu_pos(self):
         window_size = Window.size
         x_pos = window_size[0] - 250
-        y_pos = 15
-        pos = [x_pos, y_pos]
+        pos = x_pos
         return pos
 
     def servos_initial_value(self, no_servo):
@@ -236,8 +236,43 @@ class MotorWindow(Screen):
         self.ids[str(id_angle)].servo_angle = int(value)
 
 
+class MinMaxLayout(BoxLayout):
+    min_val = StringProperty("0")
+    max_val = StringProperty("180")
+
+    def on_value(self, value, min_max):
+        if min_max == "min":
+            self.min_val = value
+        else:
+            self.max_val = value
+
+
 class MotorDataSettingWindow(Screen):
-    pass
+    def on_pre_enter(self):
+        file_path = 'templates/dataSettingWindow/servos_data.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+        for servo in servos_list:
+            id = "min_max" + servo["id"]
+            self.ids[str(id)].min_val = str(servo["min"])
+            self.ids[str(id)].max_val = str(servo["max"])
+
+    def guardar_min_max(self):
+        file_path = 'templates/dataSettingWindow/servos_data.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+            for i in range(2):
+                id = "min_max" + str(i)
+                servos_list[i]["min"] = int(self.ids[str(id)].min_val)
+                servos_list[i]["max"] = int(self.ids[str(id)].max_val)
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json.dump(servos_list, json_file, indent=2)
+
+    def slider_func(self, no_servo, value):
+        id_text = "grados_servo" + str(no_servo)
+        id_angle = "servo_movible" + str(no_servo)
+        self.ids[str(id_text)].text = f'{int(value)}°'
+        self.ids[str(id_angle)].servo_angle = int(value)
 
 
 class AwesomeApp(App):

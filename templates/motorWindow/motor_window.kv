@@ -37,7 +37,7 @@
     source: 'templates/motorWindow/imagenes/SG90/Servo_movil_v2.png'
     allow_stretch: True
     keep_ratio: True
-    servo_angle: 0
+    servo_angle: 90
     canvas.before: 
         PushMatrix
         Rotate:
@@ -93,7 +93,7 @@
 
 
 <ServoGrados@Label>:
-    text: ''
+    text: '90°'
     color: (125/255, 194/255, 61/255, 1)
     bold: True
     font_size: 35
@@ -728,7 +728,7 @@
         FloatLayout:
             size_hint: [None, 0.00001]
             BoxLayout:
-                pos: root.menu_pos()
+                pos: [root.menu_pos(), 15]
                 orientation: "horizontal"
                 size_hint: [None,None]
                 width: 225
@@ -750,7 +750,7 @@
                     background_down: ''
                     background_color: backgroundGeneral
                     size_hint: [None, None]
-                    size: [50, 50]
+                    size: [48, 48]
                     pos_hint: {'center_x':0.5,'center_y': 0.5}
                     image_source: 'templates/motorWindow/imagenes/menu/flecha-izquierda.png'
                     on_press: 
@@ -793,7 +793,7 @@
                     background_down: ''
                     background_color: backgroundGeneral
                     size_hint: [None, None]
-                    size: [50, 50]
+                    size: [48, 48]
                     pos_hint: {'center_x':0.5,'center_y': 0.5}
                     image_source: 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
                     on_press: 
