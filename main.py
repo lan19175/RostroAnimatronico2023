@@ -237,11 +237,15 @@ class MinMaxServo(BoxLayout):
 
     min_val = StringProperty("0")
     max_val = StringProperty("180")
-    servo_angle = NumericProperty(90)
     servo_angle_text = StringProperty("90°")
     servo_nombre = StringProperty("Servo 1")
     cuerpo_path = StringProperty(file1)
     movil_path = StringProperty(file2)
+    servo_angle = NumericProperty(90)
+    pos_x_brazo = NumericProperty(.48)
+    pos_y_brazo = NumericProperty(.17)
+    pos_x_text = NumericProperty(.467)
+    pos_y_text = NumericProperty(.53)
 
     def on_value(self, value, min_max):
         if min_max == "min":

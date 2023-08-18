@@ -27,7 +27,7 @@
                 size: [250,250]
 
             Image:
-                pos_hint: {'center_x':0.48,'center_y': 0.17}
+                pos_hint: {'center_x':root.pos_x_brazo,'center_y': root.pos_y_brazo}
                 size_hint:[None,None]
                 size: [290,110]
                 source: root.movil_path
@@ -61,7 +61,7 @@
                 color: (125/255, 194/255, 61/255, 1)
                 bold: True
                 font_size: 35
-                pos_hint: {'center_x':0.467,'center_y': 0.53}
+                pos_hint: {'center_x':root.pos_x_text,'center_y': root.pos_y_text}
                 background_color: (0, 0, 0, 1) 
                 size_hint: [None, None]
                 width: 81
@@ -268,11 +268,19 @@
                             servo_nombre: "SERVO 13"
                             cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
                             movil_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+                            pos_x_brazo: .535
+                            pos_y_brazo: .23
+                            pos_x_text: .535
+                            pos_y_text: .55
                         MinMaxServo:
                             id: min_max_servo13
                             servo_nombre: "SERVO 14"
                             cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
                             movil_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+                            pos_x_brazo: .535
+                            pos_y_brazo: .23
+                            pos_x_text: .535
+                            pos_y_text: .55
                     # Servo3 AX-12A Servo1 Y4XL
                     MinMaxBoxLayout:
                         MinMaxServo:
@@ -280,11 +288,19 @@
                             servo_nombre: "SERVO 15"
                             cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
                             movil_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+                            pos_x_brazo: .535
+                            pos_y_brazo: .23
+                            pos_x_text: .535
+                            pos_y_text: .55
                         MinMaxServo:
                             id: min_max_servo15
                             servo_nombre: "SERVO 16"
                             cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
                             movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+                            pos_x_brazo: .53
+                            pos_y_brazo: .23
+                            pos_x_text: .535
+                            pos_y_text: .6
                     # Servo2 Servo3 Y4XL
                     MinMaxBoxLayout:
                         MinMaxServo:
@@ -292,11 +308,19 @@
                             servo_nombre: "SERVO 17"
                             cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
                             movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+                            pos_x_brazo: .53
+                            pos_y_brazo: .23
+                            pos_x_text: .535
+                            pos_y_text: .6
                         MinMaxServo:
                             id: min_max_servo17
                             servo_nombre: "SERVO 18"
                             cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
                             movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+                            pos_x_brazo: .53
+                            pos_y_brazo: .23
+                            pos_x_text: .535
+                            pos_y_text: .6
                     # Servo4 Y4XL
                     MinMaxBoxLayout:
                         MinMaxServo:
@@ -304,9 +328,10 @@
                             servo_nombre: "SERVO 19"
                             cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
                             movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
-                        
-                    
-                        
+                            pos_x_brazo: .53
+                            pos_y_brazo: .23
+                            pos_x_text: .535
+                            pos_y_text: .6
         BoxLayout:
             orientation:"vertical"
             size_hint: [0.37, 1]
