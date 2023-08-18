@@ -53,10 +53,10 @@ class EmojiOptions(Button):
         global motor_window
         motor_window.ids.control_emojis.image_source = self.emoji_link
         for i in range(19):
-            id_slider = "slider_servo" + str(i)
+            id_slider = "manual_servo" + str(i)
             m_value = "M" + str(i+1)
-            motor_window.ids[str(id_slider)].value = getattr(self,
-                                                             str(m_value))
+            motor_window.ids[str(id_slider)].slider_val = getattr(self,
+                                                                  str(m_value))
 
 
 class EmojiWindow(Popup):
@@ -90,40 +90,54 @@ class MainWindow(Screen):
     pass
 
 
+class ManualServo(BoxLayout):
+    file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
+    file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
+
+    min_val = StringProperty("0")
+    max_val = StringProperty("180")
+    servo_angle_text = StringProperty()
+    servo_nombre = StringProperty("Servo 1")
+    cuerpo_path = StringProperty(file1)
+    movil_path = StringProperty(file2)
+    servo_angle = NumericProperty()
+    pos_x_brazo = NumericProperty(.48)
+    pos_y_brazo = NumericProperty(.17)
+    pos_x_text = NumericProperty(.467)
+    pos_y_text = NumericProperty(.53)
+    slider_val = NumericProperty()
+
+    def slider_func(self, value):
+        self.servo_angle = int(value)
+        self.servo_angle_text = f'{int(value)}°'
+        self.slider_val = int(value)
+
+
 class MotorWindow(Screen):
-    def send_gesto(self):
-        pass
-
-    def new_emoji_data(self, name, emoji, motores):
-        json_string = {
-            "nombre": name,
-            "emoji": emoji,
-            "M1": int(motores[0]),
-            "M2": int(motores[1]),
-            "M3": int(motores[2]),
-            "M4": int(motores[3]),
-            "M5": int(motores[4]),
-            "M6": int(motores[5]),
-            "M7": int(motores[6]),
-            "M8": int(motores[7]),
-            "M9": int(motores[8]),
-            "M10": int(motores[9]),
-            "M11": int(motores[10]),
-            "M12": int(motores[11]),
-            "M13": int(motores[12]),
-            "M14": int(motores[13]),
-            "M15": int(motores[14]),
-            "M16": int(motores[15]),
-            "M17": int(motores[16]),
-            "M18": int(motores[17]),
-            "M19": int(motores[18])
-        }
-        return json_string
-
     def on_pre_enter(self):
         global motor_window
+        # valores iniciales de los servos
         motor_window = self
-        self.initial_values()
+        initial_value = [131, 51, 104,
+                         112, 74, 41,
+                         118, 150, 99,
+                         54, 170, 43,
+                         195, 37, 250,
+                         270, 115, 180,
+                         300]
+        for i in range(19):
+            id = "manual_servo" + str(i)
+            value = initial_value[i]
+            self.ids[str(id)].slider_val = value
+        # carga min y max de cada servo
+        file_path = 'templates/dataSettingWindow/servos_data.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+        for servo in servos_list:
+            id = "manual_servo" + servo["id"]
+            self.ids[str(id)].min_val = str(servo["min"])
+            self.ids[str(id)].max_val = str(servo["max"])
+        # carga de emojis almacenados
         emoji_json = open('templates/motorWindow/emoji_data.json')
         data = json.load(emoji_json)
         self.ids.emoji_options.clear_widgets()
@@ -156,14 +170,34 @@ class MotorWindow(Screen):
                 M19=emoji["M19"])
             self.ids.emoji_options.add_widget(new)
 
-    def initial_values(self):
-        for i in range(19):
-            id_slider = "slider_servo" + str(i)
-            id_text = "grados_servo" + str(i)
-            id_angle = "servo_movible" + str(i)
-            value = int(self.ids[str(id_slider)].value)
-            self.ids[str(id_text)].text = f'{int(value)}°'
-            self.ids[str(id_angle)].servo_angle = int(value)
+    def send_gesto(self):
+        pass
+
+    def new_emoji_data(self, name, emoji, motores):
+        json_string = {
+            "nombre": name,
+            "emoji": emoji,
+            "M1": int(motores[0]),
+            "M2": int(motores[1]),
+            "M3": int(motores[2]),
+            "M4": int(motores[3]),
+            "M5": int(motores[4]),
+            "M6": int(motores[5]),
+            "M7": int(motores[6]),
+            "M8": int(motores[7]),
+            "M9": int(motores[8]),
+            "M10": int(motores[9]),
+            "M11": int(motores[10]),
+            "M12": int(motores[11]),
+            "M13": int(motores[12]),
+            "M14": int(motores[13]),
+            "M15": int(motores[14]),
+            "M16": int(motores[15]),
+            "M17": int(motores[16]),
+            "M18": int(motores[17]),
+            "M19": int(motores[18])
+        }
+        return json_string
 
     def guardar_emoji(self):
         name_emoji = self.ids.nombre.text
@@ -171,8 +205,8 @@ class MotorWindow(Screen):
         self.ids.nombre.text = ""
         motor_values = []
         for i in range(19):
-            id = "slider_servo" + str(i)
-            motor_values.append(int(self.ids[str(id)].value))
+            id = "manual_servo" + str(i)
+            motor_values.append(int(self.ids[str(id)].slider_val))
 
         new_emoji = self.new_emoji_data(name_emoji, emoji_selected,
                                         motor_values)
@@ -213,22 +247,6 @@ class MotorWindow(Screen):
         x_pos = window_size[0] - 250
         pos = x_pos
         return pos
-
-    def servos_initial_value(self, no_servo):
-        value = [180, 50, 30,
-                 90, 55, 95,
-                 150, 10, 20,
-                 160, 120, 45,
-                 70, 300, 180,
-                 300, 4, 225,
-                 45]
-        return int(value[no_servo])
-
-    def slider_func(self, no_servo, value):
-        id_text = "grados_servo" + str(no_servo)
-        id_angle = "servo_movible" + str(no_servo)
-        self.ids[str(id_text)].text = f'{int(value)}°'
-        self.ids[str(id_angle)].servo_angle = int(value)
 
 
 class MinMaxServo(BoxLayout):
