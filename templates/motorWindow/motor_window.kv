@@ -8,6 +8,7 @@
 #:set backgroundGeneral (204/255, 204/255, 204/255, 1)
 
 # Creación de clases
+# Clase servo individual
 <ManualServo>:
     orientation: "vertical"
     size_hint:[None, 1]
@@ -85,7 +86,7 @@
             cursor_size: [40,40]
             on_value: root.slider_func(self.value)
 
-
+# clase para agrupación de servos
 <ServosBoxLayout@BoxLayout>:
     orientation:"horizontal"
     size_hint: [1, None]

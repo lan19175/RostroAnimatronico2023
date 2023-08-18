@@ -9,9 +9,10 @@ from pygrabber.dshow_graph import FilterGraph
 import json
 from kivy.properties import StringProperty, NumericProperty
 # from kivy.factory import Factory
-
+# resolución aplicacion
 Window.maximize()
 
+# carga de archivos .kv
 Builder.load_file('templates/manager_window.kv')
 Builder.load_file('templates/mainWindow/main_window.kv')
 Builder.load_file('templates/dataSettingWindow/data_setting_window.kv')
@@ -19,13 +20,12 @@ Builder.load_file('templates/motorWindow/motor_window.kv')
 Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
 
-emoji_selected = ''
-
 
 class WindowManager(ScreenManager):
     pass
 
 
+# gestos guardados en MotorWindow
 class EmojiOptions(Button):
     name = StringProperty()
     emoji_link = StringProperty()
@@ -59,6 +59,7 @@ class EmojiOptions(Button):
                                                                   str(m_value))
 
 
+# popup para seleccion de emoji
 class EmojiWindow(Popup):
     def emoji_selected(self, emoji_id):
         global motor_window
@@ -69,6 +70,7 @@ class EmojiWindow(Popup):
         motor_window.ids.emoji.emoji_selected = emoji_id
 
 
+# popup de settings
 class SettingWindow(Popup):
     def spinner_clicked(self, value):
         pass
@@ -86,10 +88,12 @@ class SettingWindow(Popup):
         pass
 
 
+# ventana principal
 class MainWindow(Screen):
     pass
 
 
+# objeto de servo en MotorWindow
 class ManualServo(BoxLayout):
     file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
     file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
@@ -113,6 +117,7 @@ class ManualServo(BoxLayout):
         self.slider_val = int(value)
 
 
+# MotorWindow, ventana control manual de motores
 class MotorWindow(Screen):
     def on_pre_enter(self):
         global motor_window
@@ -173,6 +178,7 @@ class MotorWindow(Screen):
     def send_gesto(self):
         pass
 
+    # creación objeto emoji con formato json
     def new_emoji_data(self, name, emoji, motores):
         json_string = {
             "nombre": name,
@@ -207,9 +213,10 @@ class MotorWindow(Screen):
         for i in range(19):
             id = "manual_servo" + str(i)
             motor_values.append(int(self.ids[str(id)].slider_val))
-
+        # creacion objeto json con valores de motores
         new_emoji = self.new_emoji_data(name_emoji, emoji_selected,
                                         motor_values)
+        # escritura en archivo json
         with open('templates/motorWindow/emoji_data.json', 'r+') as file:
             file_data = json.load(file)
             file_data["emojis_details"].append(new_emoji)
@@ -217,6 +224,7 @@ class MotorWindow(Screen):
             json.dump(file_data, file, indent=4)
         emoji_link_str = ('templates/motorWindow/imagenes/emojis/'
                           + emoji_selected + '.png')
+        # creación de boton para gesto en la ventana
         new = EmojiOptions(
                 text=name_emoji,
                 name=name_emoji,
@@ -249,6 +257,7 @@ class MotorWindow(Screen):
         return pos
 
 
+# objeto servo en MotorDataSettingWindow
 class MinMaxServo(BoxLayout):
     file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
     file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
@@ -265,6 +274,7 @@ class MinMaxServo(BoxLayout):
     pos_x_text = NumericProperty(.467)
     pos_y_text = NumericProperty(.53)
 
+    # al presionar enter en las entradas de min o max se actualizan los valores
     def on_value(self, value, min_max):
         if min_max == "min":
             self.min_val = value
@@ -276,6 +286,7 @@ class MinMaxServo(BoxLayout):
         self.servo_angle_text = f'{int(value)}°'
 
 
+# ventana para controlar max/min servo y modificar base datos chatbot
 class MotorDataSettingWindow(Screen):
     def on_pre_enter(self):
         file_path = 'templates/dataSettingWindow/servos_data.json'
@@ -298,10 +309,11 @@ class MotorDataSettingWindow(Screen):
             json.dump(servos_list, json_file, indent=2)
 
 
-class AwesomeApp(App):
+# aplicación
+class RostroAnimatronico(App):
     def build(self):
         return WindowManager()
 
 
 if __name__ == '__main__':
-    AwesomeApp().run()
+    RostroAnimatronico().run()
