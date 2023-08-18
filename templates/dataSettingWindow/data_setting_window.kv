@@ -5,60 +5,150 @@
 #:set backgroundGeneral (204/255, 204/255, 204/255, 1)
 #:set colorUVG (0,141/255,54/255,1)
 
-<MinMaxLayout>:
+<MinMaxBoxLayout@BoxLayout>:
     orientation:"horizontal"
     size_hint: [1, None]
-    height: 100
-    SeparadorHorizontal:
-        width: 15
-    BoxLayout:
-        orientation: "vertical"
-        size_hint: [None, 1]
-        width: 95
-        Label:
-            text: "MIN"
-            font_size: 30
-        TextInput:
-            size_hint: [None, None]
-            size: [95, 70]
-            input_filter: "int"
-            font_size: 28
-            foreground_color: (1, 1, 1, 1)
-            padding_x: [29,0]
-            padding_y: [20,0]
-            background_normal: "templates/dataSettingWindow/imagenes/text_input_mini.png"
-            background_active: "templates/dataSettingWindow/imagenes/text_input_mini.png"
-            text: root.min_val
-            multiline: False
-            on_text_validate: root.on_value(self.text, "min")
-    Label:
-        text: ""
-    BoxLayout:
-        orientation: "vertical"
-        size_hint: [None, 1]
-        width: 95
-        Label:
-            text: "MAX"
-            font_size: 30
-        TextInput:
-            size_hint: [None, None]
-            size: [95, 70]
-            input_filter: "int"
-            font_size: 28
-            foreground_color: (1, 1, 1, 1)
-            padding_x: [20,0]
-            padding_y: [20,0]
-            background_normal: "templates/dataSettingWindow/imagenes/text_input_mini.png"
-            background_active: "templates/dataSettingWindow/imagenes/text_input_mini.png"
-            text: root.max_val
-            multiline: False
-            on_text_validate: root.on_value(self.text, "max")
-    SeparadorHorizontal:
-        width: 15
+    height: 450
+    spacing: 100
+    padding: [100, 0]
 
 
-<ServoSliderMinMax@ServoSlider>:
-    value: 90
+<MinMaxServo>:
+    orientation: "horizontal"
+    size_hint:[None, 1]
+    width: 450
+    BoxLayout:
+        orientation:"vertical"
+        FloatLayout:
+            Image:
+                pos_hint: {'center_x':0.535,'center_y': -0.152}
+                source: root.cuerpo_path
+                size_hint: [None, None]
+                size: [250,250]
+
+            Image:
+                pos_hint: {'center_x':0.48,'center_y': 0.17}
+                size_hint:[None,None]
+                size: [290,110]
+                source: root.movil_path
+                allow_stretch: True
+                keep_ratio: True
+                canvas.before: 
+                    PushMatrix
+                    Rotate:
+                        axis: 0,0,1
+                        angle: root.servo_angle
+                        origin: self.center
+                canvas.after: 
+                    PopMatrix
+        FloatLayout:
+            Label:
+                text: root.servo_nombre
+                color: colorUVG
+                bold: True
+                pos_hint: {'center_x':0.32,'center_y': 0.5}
+                font_size: 25
+                canvas.before: 
+                    PushMatrix
+                    Rotate:
+                        axis: 0,0,1
+                        angle: 90
+                        origin: self.center
+                canvas.after: 
+                    PopMatrix
+            Label:
+                text: root.servo_angle_text
+                color: (125/255, 194/255, 61/255, 1)
+                bold: True
+                font_size: 35
+                pos_hint: {'center_x':0.467,'center_y': 0.53}
+                background_color: (0, 0, 0, 1) 
+                size_hint: [None, None]
+                width: 81
+                height: 55
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+        Label:
+            text: ""
+            size_hint: [1, None]
+            height: -45
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: [1, None]
+            height: 100
+            Label:
+                text: ""
+                size_hint: [None, 1]
+                width: 45
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: [None, 1]
+                width: 95
+                Label:
+                    text: "MIN"
+                    font_size: 30
+                TextInput:
+                    size_hint: [None, None]
+                    size: [95, 70]
+                    input_filter: "int"
+                    font_size: 28
+                    foreground_color: (1, 1, 1, 1)
+                    padding_x: [29,0]
+                    padding_y: [20,0]
+                    background_normal: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+                    background_active: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+                    text: root.min_val
+                    multiline: False
+                    on_text_validate: root.on_value(self.text, "min")
+            Label:
+                text: ""
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: [None, 1]
+                width: 95
+                Label:
+                    text: "MAX"
+                    font_size: 30
+                TextInput:
+                    size_hint: [None, None]
+                    size: [95, 70]
+                    input_filter: "int"
+                    font_size: 28
+                    foreground_color: (1, 1, 1, 1)
+                    padding_x: [20,0]
+                    padding_y: [20,0]
+                    background_normal: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+                    background_active: "templates/dataSettingWindow/imagenes/text_input_mini.png"
+                    text: root.max_val
+                    multiline: False
+                    on_text_validate: root.on_value(self.text, "max")
+            Label:
+                text: ""
+                size_hint: [None, 1]
+                width: 30
+        Label:
+            text: ""
+            size_hint: [1, None]
+            height: -30
+        Slider:
+            min: root.min_val
+            max: root.max_val
+            step: 1
+            value: 90
+            orientation: "horizontal"
+            sensitivity: "handle"
+            value_track: True
+            value_track_color: colorUVG
+            value_track_width: 7
+            background_width: 60
+            cursor_image: 'templates/motorWindow/imagenes/slider-icon.png'
+            cursor_size: [40,40]
+            on_value: root.slider_func(self.value)
+        
 
 
 <SeparadorHorizontal@Label>:
@@ -116,58 +206,107 @@
                 
                 GridLayout:
                     size_hint: [1, None]
-                    height: self.minimum_height
+                    height: 5000
                     cols: 1
                     rows: 14
+                    padding: [0, 50]
+                    spacing: 50
                     
-                    #SG1
-                    SeparadorVertical:
-                    ServosBoxLayout:
-                        orientation: "horizontal"
-                        ServoBoxLayout:
-                            id_servo: 0
-                            BoxLayoutVertical:
-                                FloatLayout:
-                                    ServoCuerpo:
-                                    ServoBrazo:
-                                        id: servo_movible0
-                            FloatLayout:
-                                ServoNombre:
-                                    text: "SERVO 1"
-                                ServoGrados:
-                                    id: grados_servo0
-                                    pos_hint: {'center_x':0.467,'center_y': 0.53}
-                            SeparadorVertical:
-                                height: -110
-                            MinMaxLayout:
-                                id: min_max0
-                            SeparadorVertical:
-                                height: -15
-                            ServoSliderMinMax:
-                                id: slider_servo0
-                                on_value: root.slider_func(self.parent.id_servo, self.value)
-                        ServoBoxLayout:
-                            id_servo: 1
-                            BoxLayoutVertical:
-                                FloatLayout:
-                                    ServoCuerpo:
-                                    ServoBrazo:
-                                        id: servo_movible1
-                            FloatLayout:
-                                ServoNombre:
-                                    text: "SERVO 2"
-                                ServoGrados:
-                                    id: grados_servo1
-                                    pos_hint: {'center_x':0.467,'center_y': 0.53}
-                            SeparadorVertical:
-                                height: -110
-                            MinMaxLayout:
-                                id: min_max1
-                            SeparadorVertical:
-                                height: -15
-                            ServoSliderMinMax:
-                                id: slider_servo1
-                                on_value: root.slider_func(self.parent.id_servo, self.value)
+                    # SG1 SG2
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo0
+                            servo_nombre: "SERVO 1"
+                        MinMaxServo:
+                            id: min_max_servo1
+                            servo_nombre: "SERVO 2"
+                    # SG3 SG4
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo2
+                            servo_nombre: "SERVO 3"
+                        MinMaxServo:
+                            id: min_max_servo3
+                            servo_nombre: "SERVO 4"
+                    # SG5 SG6
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo4
+                            servo_nombre: "SERVO 5"
+                        MinMaxServo:
+                            id: min_max_servo5
+                            servo_nombre: "SERVO 6"
+                    # SG7 SG8
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo6
+                            id_servo: "0"
+                            servo_nombre: "SERVO 7"
+                        MinMaxServo:
+                            id: min_max_servo7
+                            servo_nombre: "SERVO 8"
+                    # SG9 SG10
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo8
+                            servo_nombre: "SERVO 9"
+                        MinMaxServo:
+                            id: min_max_servo9
+                            servo_nombre: "SERVO 10"
+                    # SG11 SG12
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo10
+                            servo_nombre: "SERVO 11"
+                        MinMaxServo:
+                            id: min_max_servo11
+                            servo_nombre: "SERVO 12"
+                    # Servo1 Servo2 AX-12A 
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo12
+                            servo_nombre: "SERVO 13"
+                            cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
+                            movil_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+                        MinMaxServo:
+                            id: min_max_servo13
+                            servo_nombre: "SERVO 14"
+                            cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
+                            movil_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+                    # Servo3 AX-12A Servo1 Y4XL
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo14
+                            servo_nombre: "SERVO 15"
+                            cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-cuerpo.png'
+                            movil_path: 'templates/motorWindow/imagenes/dynamixel-ax/dynamixel-ax-movil.png'
+                        MinMaxServo:
+                            id: min_max_servo15
+                            servo_nombre: "SERVO 16"
+                            cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
+                            movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+                    # Servo2 Servo3 Y4XL
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo16
+                            servo_nombre: "SERVO 17"
+                            cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
+                            movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+                        MinMaxServo:
+                            id: min_max_servo17
+                            servo_nombre: "SERVO 18"
+                            cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
+                            movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+                    # Servo4 Y4XL
+                    MinMaxBoxLayout:
+                        MinMaxServo:
+                            id: min_max_servo18
+                            servo_nombre: "SERVO 19"
+                            cuerpo_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-cuerpo-transformed.png'
+                            movil_path: 'templates/motorWindow/imagenes/dynamixel-Y4XL-320/dynamixel-Y4XL-320-movil.png'
+                        
+                    
+                        
         BoxLayout:
             orientation:"vertical"
             size_hint: [0.37, 1]

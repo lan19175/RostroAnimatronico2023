@@ -21,11 +21,6 @@ Builder.load_file('templates/settingsWindow/settings_popup.kv')
 
 emoji_selected = ''
 
-"""emoji_json = open('templates/motorWindow/emoji_data.json')
-data = json.load(emoji_json)
-for i in data['emojis_details']:
-    print(i)"""
-
 
 class WindowManager(ScreenManager):
     pass
@@ -236,15 +231,27 @@ class MotorWindow(Screen):
         self.ids[str(id_angle)].servo_angle = int(value)
 
 
-class MinMaxLayout(BoxLayout):
+class MinMaxServo(BoxLayout):
+    file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
+    file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
+
     min_val = StringProperty("0")
     max_val = StringProperty("180")
+    servo_angle = NumericProperty(90)
+    servo_angle_text = StringProperty("90°")
+    servo_nombre = StringProperty("Servo 1")
+    cuerpo_path = StringProperty(file1)
+    movil_path = StringProperty(file2)
 
     def on_value(self, value, min_max):
         if min_max == "min":
             self.min_val = value
         else:
             self.max_val = value
+
+    def slider_func(self, value):
+        self.servo_angle = int(value)
+        self.servo_angle_text = f'{int(value)}°'
 
 
 class MotorDataSettingWindow(Screen):
@@ -253,7 +260,7 @@ class MotorDataSettingWindow(Screen):
         with open(file_path, 'r', encoding='utf-8') as json_file:
             servos_list = json.load(json_file)
         for servo in servos_list:
-            id = "min_max" + servo["id"]
+            id = "min_max_servo" + servo["id"]
             self.ids[str(id)].min_val = str(servo["min"])
             self.ids[str(id)].max_val = str(servo["max"])
 
@@ -261,18 +268,12 @@ class MotorDataSettingWindow(Screen):
         file_path = 'templates/dataSettingWindow/servos_data.json'
         with open(file_path, 'r', encoding='utf-8') as json_file:
             servos_list = json.load(json_file)
-            for i in range(2):
-                id = "min_max" + str(i)
+            for i in range(19):
+                id = "min_max_servo" + str(i)
                 servos_list[i]["min"] = int(self.ids[str(id)].min_val)
                 servos_list[i]["max"] = int(self.ids[str(id)].max_val)
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(servos_list, json_file, indent=2)
-
-    def slider_func(self, no_servo, value):
-        id_text = "grados_servo" + str(no_servo)
-        id_angle = "servo_movible" + str(no_servo)
-        self.ids[str(id_text)].text = f'{int(value)}°'
-        self.ids[str(id_angle)].servo_angle = int(value)
 
 
 class AwesomeApp(App):
