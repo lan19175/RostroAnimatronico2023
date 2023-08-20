@@ -5,10 +5,12 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.core.window import Window
-from pygrabber.dshow_graph import FilterGraph
-import json
+# from pygrabber.dshow_graph import FilterGraph
 from kivy.properties import StringProperty, NumericProperty
+import json
+import Trainer
 # from kivy.factory import Factory
+
 # resolución aplicacion
 Window.maximize()
 
@@ -76,12 +78,13 @@ class SettingWindow(Popup):
         pass
 
     def values_array(self):
-        devices = FilterGraph().get_input_devices()
+        """devices = FilterGraph().get_input_devices()
         available_cameras = {}
         available_cameras_label = []
         for device_index, device_name in enumerate(devices):
             available_cameras[device_index] = device_name
-            available_cameras_label.append(device_name)
+            available_cameras_label.append(device_name)"""
+        available_cameras_label = ["Logitec", "Prueba 1", "internal"]
         return available_cameras_label
 
     def conectar_com(self):
@@ -307,6 +310,48 @@ class MotorDataSettingWindow(Screen):
                 servos_list[i]["max"] = int(self.ids[str(id)].max_val)
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(servos_list, json_file, indent=2)
+
+    def chatbot_data(self):
+        global chatbot_details
+        file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            chatbot_details = json.load(json_file)
+        values = []
+        for intent in chatbot_details["intents"]:
+            values.append(intent["tag"])
+        return values
+
+    def intent_select(self, value):
+        global chatbot_details
+        pattern_value = ""
+        response_value = ""
+        for intent in chatbot_details["intents"]:
+            if (value == intent["tag"]):
+                for pattern in intent["patterns"]:
+                    pattern_value = pattern_value + pattern + ",\n"
+                for response in intent["responses"]:
+                    response_value = response_value + response + ",\n"
+                self.ids.patterns.text = pattern_value
+                self.ids.responses.text = response_value
+
+    def modificar_chatbot(self):
+        file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            chatbot_details = json.load(json_file)
+        intent_select = self.ids.intent_select.text
+        pattern_value = self.ids.patterns.text
+        response_value = self.ids.responses.text
+        pattern_array = pattern_value.split(",\n")
+        response_array = response_value.split(",\n")
+        pattern_array.pop()
+        response_array.pop()
+        for intent in chatbot_details["intents"]:
+            if (intent_select == intent["tag"]):
+                intent["patterns"] = pattern_array
+                intent["responses"] = response_array
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
+        Trainer.runTraining()
 
 
 # aplicación
