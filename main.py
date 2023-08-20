@@ -3,6 +3,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
+# from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.core.window import Window
 # from pygrabber.dshow_graph import FilterGraph
@@ -22,6 +23,8 @@ Builder.load_file('templates/dataSettingWindow/append_chatbot_window.kv')
 Builder.load_file('templates/motorWindow/motor_window.kv')
 Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
+texto_perron = "hola "
+texto_perron_chatbot = "adios "
 
 
 class WindowManager(ScreenManager):
@@ -92,9 +95,62 @@ class SettingWindow(Popup):
         pass
 
 
+class MensajeCelularChatbot(Button):
+    texto = StringProperty()
+    ancho = NumericProperty()
+    altura = NumericProperty()
+
+
+class MensajeCelularUsuario(Button):
+    texto = StringProperty()
+    ancho = NumericProperty()
+    altura = NumericProperty()
+
+
 # ventana principal
 class MainWindow(Screen):
-    pass
+    def new_mensaje(self, text):
+        length = len(text)
+        width = length * 12
+        if (width > 350):
+            width = 350
+        texto_split = text.split(" ")
+        texto_arreglado = ""
+        lines = 1
+        max_length = 29
+        for palabra in texto_split:
+            texto_arreglado_new = texto_arreglado + palabra + " "
+            length_now = len(texto_arreglado_new)
+            if (length_now > max_length):
+                texto_arreglado = texto_arreglado + "\n" + palabra + " "
+                lines = lines + 1
+                max_length = max_length + 29
+            else:
+                texto_arreglado = texto_arreglado_new
+            print(f'max: {max_length}')
+        height = lines * 30
+        print(f'height: {height}')
+        return width, height, texto_arreglado
+
+    def add_mensaje_usuario(self):
+        global texto_perron
+        texto_perron = texto_perron + texto_perron
+        [ancho, altura, texto_arreglado] = self.new_mensaje(texto_perron)
+        new = MensajeCelularUsuario(texto=texto_arreglado,
+                                    ancho=ancho,
+                                    altura=altura)
+        self.ids.celular.add_widget(new, index=0)
+        self.ids.scrollview_celular.scroll_to(new)
+
+    def add_mensaje_chatbot(self):
+        global texto_perron_chatbot
+        texto_perron_chatbot = texto_perron_chatbot + texto_perron_chatbot
+        [ancho, altura, texto_arreglado] =self.new_mensaje(texto_perron_chatbot)
+        new = MensajeCelularChatbot(texto=texto_arreglado,
+                                    ancho=ancho,
+                                    altura=altura)
+        self.ids.celular.add_widget(new, index=0)
+        self.ids.scrollview_celular.scroll_to(new)
 
 
 # objeto de servo en MotorWindow

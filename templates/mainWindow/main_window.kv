@@ -1,18 +1,206 @@
 #:kivy 1.0
 
+#: import Factory kivy.factory.Factory
+
+#:set colorUVG (0,141/255,54/255,1)
+#:set backgroundGeneral (204/255, 204/255, 204/255, 1)
+<MensajeCelularUsuario>:
+    size_hint: [None, None]
+    width: root.ancho
+    height: root.altura
+    pos_hint: {"right": 0.98}
+    text: root.texto
+    font_size: 20
+    background_normal: ''
+    background_down: ''
+    background_color: (0, 0, 0, 0)
+    canvas.before:
+        Color:
+            rgba: colorUVG
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+        
+
+
+<MensajeCelularChatbot>:
+    size_hint: [None, None]
+    width: root.ancho
+    height: root.altura
+    pos_hint: {"left": 0.3}
+    text: root.texto
+    font_size: 20
+    background_normal: ''
+    background_down: ''
+    background_color: (0, 0, 0, 0)
+    canvas.before:
+        Color:
+            rgba: (0/255, 168/255, 243/255, 1)
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+
+
 <MainWindow>:
     name: "main"
 
-    BoxLayout:
-        orientation: "vertical"
-        size: root.width, root.height
-        Label:
-            text: "Main Screen"
-            font_size: 32
-        
-        Button:
-            text: "Go Back"
-            font_sice: 32
-            on_release: 
-                app.root.current = "motor"
-                root.manager.transition.direction = "left"
+    GridLayout:
+        cols: 3
+        canvas.before:
+            Color:
+                rgba: backgroundGeneral
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        BoxLayout:
+            orientation: "vertical"
+            
+            Label:
+                text: "CAMARA"
+                font_size: 30
+            
+            Button:
+                text: "ESTADO DE MOTORES\n***VER QUE PONER AQUÍ***"
+                font_size: 30
+                on_press: root.add_mensaje_usuario()
+            Button:
+                text: "CHATBOT"
+                font_size: 30
+                on_press: root.add_mensaje_chatbot()
+        BoxLayout:
+            orientation: "vertical"
+
+            Label:
+                text: 'LOGO UVG'
+                font_size: 30
+            BoxLayout:
+                orientation:'horizontal'
+                Label:
+                    text: 'BOTON TOMAR FOTO'
+                    font_size: 30
+                Label:
+                    text: 'CUENTA REGRESIVA'
+                    font_size: 30
+            BoxLayout:
+                orientation:'horizontal'
+                Label:
+                    text: 'IMAGEN ROBOT'
+                    font_size: 30
+                Label:
+                    text: 'SWITCH'
+                    font_size: 30
+                Label:
+                    text: 'IMAGEN CEREBRO'
+                    font_size: 30
+        BoxLayout:
+            orientation: "vertical"
+
+            BoxLayout:
+                orientation:"horizontal"
+                size_hint: [1, 0.3]
+                Label:
+                    text: 'FOTO DE LA \nPERSONA'
+                    font_size: 30
+                Label:
+                    text: 'EMOJI DE LA \nEMOCIÓN'
+                    font_size: 30
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: [1, 0.7]
+                canvas.before:
+                    Color:
+                        rgba: (1, 1, 1, 1)
+                    Rectangle:
+                        source: 'templates/mainWindow/imagenes/celular.png'
+                        size: [self.width-50, self.height]
+                        pos: [self.pos[0]+50, self.pos[1]]
+                Label:
+                    text: ''
+                    size_hint: [1, None]
+                    height: 95
+                ScrollView:
+                    id: scrollview_celular
+                    do_scroll_y: True
+                    do_scroll_x: False
+                    size_hint: [.83, 1]
+                    pos_hint: {"center_x": .54, "center_y": .5}
+                    padding: [5, 25]
+                    BoxLayout:
+                        orientation:"vertical"
+                        size_hint: [1, None]
+                        height: self.minimum_height
+                        id: celular
+                        spacing: 30
+                        padding: [0, 30]
+                        Label:
+                            text: ''
+                            size_hint: [1, None]
+                            height: 50
+                Label:
+                    text: ''
+                    size_hint: [1, None]
+                    height: 92
+            # Menu entre pantallas
+            FloatLayout:
+                size_hint: [None, 0.00001]
+                BoxLayout:
+                    pos: [Factory.MotorWindow().menu_pos()+75, 15]
+                    orientation: "horizontal"
+                    size_hint: [None,None]
+                    width: 160
+                    height: 70
+                    background_color: (128/255, 128/255, 128/255, .5)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [15]
+
+                    Label:
+                        text:""
+                        size_hint: [0.1,1]
+                    Button:
+                        background_normal: ''
+                        background_down: ''
+                        background_color: backgroundGeneral
+                        size_hint: [None, None]
+                        size: [54, 54]
+                        pos_hint: {'center_x':0.5,'center_y': 0.5}
+                        image_source: 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                        on_press: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2_press.png'
+                        on_release: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/settings_v2.png'
+                            Factory.SettingWindow().open()
+                        Image: 
+                            source: self.parent.image_source
+                            center_x: self.parent.center_x
+                            center_y: self.parent.center_y
+                            size: [60, 60]
+                    Label:
+                        text:""
+                        size_hint: [0.2,1]
+                    Button:
+                        background_normal: ''
+                        background_down: ''
+                        background_color: backgroundGeneral
+                        size_hint: [None, None]
+                        size: [48, 48]
+                        pos_hint: {'center_x':0.5,'center_y': 0.5}
+                        image_source: 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
+                        on_press: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha-press.png'
+                        on_release: 
+                            self.image_source = 'templates/motorWindow/imagenes/menu/flecha-derecha.png'
+                            root.manager.transition.direction = "left"
+                            app.root.current = "motor"
+                        Image: 
+                            source: self.parent.image_source
+                            center_x: self.parent.center_x
+                            center_y: self.parent.center_y
+                            size: [60, 60] 
+                    Label:
+                        text:""
+                        size_hint: [0.1,1]

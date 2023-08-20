@@ -1,16 +1,13 @@
 import random
 import json
-# Librerias
 import pickle
 import numpy as np
 import nltk
-# from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import Sequential
-# from tensorflow.keras.utils import plot_model
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import SGD
 import spacy
-# from spacy import displacy
+
 # se carga el lematizador
 nlp = spacy.load('es_core_news_sm')
 
