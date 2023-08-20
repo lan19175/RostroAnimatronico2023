@@ -411,6 +411,22 @@
                     color: (1, 1, 1, 1)
                     size_hint: [None, 1]
                     width: 70
+                    background_normal: ''
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
+                    rounded_background: (0,141/255,54/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.rounded_background
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [15]
+                    on_press: 
+                        self.rounded_background = (0,117/255,45/255,1)
+                    on_release: 
+                        self.rounded_background = (0,141/255,54/255,1)
+                        Factory.AppendChatbot().open()
             Label:
                 text: ""
                 size_hint: [1, None]

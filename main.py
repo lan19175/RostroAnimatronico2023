@@ -8,7 +8,7 @@ from kivy.core.window import Window
 # from pygrabber.dshow_graph import FilterGraph
 from kivy.properties import StringProperty, NumericProperty
 import json
-import Trainer
+# import Trainer
 # from kivy.factory import Factory
 
 # resolución aplicacion
@@ -18,6 +18,7 @@ Window.maximize()
 Builder.load_file('templates/manager_window.kv')
 Builder.load_file('templates/mainWindow/main_window.kv')
 Builder.load_file('templates/dataSettingWindow/data_setting_window.kv')
+Builder.load_file('templates/dataSettingWindow/append_chatbot_window.kv')
 Builder.load_file('templates/motorWindow/motor_window.kv')
 Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
@@ -289,6 +290,31 @@ class MinMaxServo(BoxLayout):
         self.servo_angle_text = f'{int(value)}°'
 
 
+class AppendChatbot(Popup):
+    def append_chatbot(self):
+        file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            chatbot_details = json.load(json_file)
+        tag = self.ids.tag.text
+        patterns_raw = self.ids.patterns.text
+        responses_raw = self.ids.responses.text
+        patterns = patterns_raw.split(",\n")
+        responses = responses_raw.split(",\n")
+        patterns.pop()
+        responses.pop()
+        new_data = {"tag": tag,
+                    "patterns": patterns,
+                    "responses": responses
+                    }
+        with open(file_path, 'r+', encoding='utf-8') as json_file:
+            chatbot_details = json.load(json_file)
+            chatbot_details["intents"].append(new_data)
+            json_file.seek(0)
+            json.dump(chatbot_details, json_file, indent=4, ensure_ascii=False)
+        # Trainer.runTraining()
+        self.dismiss()
+
+
 # ventana para controlar max/min servo y modificar base datos chatbot
 class MotorDataSettingWindow(Screen):
     def on_pre_enter(self):
@@ -322,9 +348,21 @@ class MotorDataSettingWindow(Screen):
         return values
 
     def intent_select(self, value):
-        global chatbot_details
+        global chatbot_details, intent_old
         pattern_value = ""
         response_value = ""
+        pre_pattern_value = self.ids.patterns.text
+        pre_response_value = self.ids.responses.text
+        if (pre_pattern_value != "") and (pre_response_value != ""):
+            for intent in chatbot_details["intents"]:
+                if (intent_old == intent["tag"]):
+                    pattern_array = pre_pattern_value.split(",\n")
+                    response_array = pre_response_value.split(",\n")
+                    pattern_array.pop()
+                    response_array.pop()
+                    intent["patterns"] = pattern_array
+                    intent["responses"] = response_array
+        intent_old = value
         for intent in chatbot_details["intents"]:
             if (value == intent["tag"]):
                 for pattern in intent["patterns"]:
@@ -335,9 +373,8 @@ class MotorDataSettingWindow(Screen):
                 self.ids.responses.text = response_value
 
     def modificar_chatbot(self):
+        global chatbot_details
         file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
-        with open(file_path, 'r', encoding='utf-8') as json_file:
-            chatbot_details = json.load(json_file)
         intent_select = self.ids.intent_select.text
         pattern_value = self.ids.patterns.text
         response_value = self.ids.responses.text
@@ -351,7 +388,7 @@ class MotorDataSettingWindow(Screen):
                 intent["responses"] = response_array
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
-        Trainer.runTraining()
+        # Trainer.runTraining()
 
 
 # aplicación
