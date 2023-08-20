@@ -2,34 +2,33 @@ from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.core.window import Window
-from pygrabber.dshow_graph import FilterGraph
-import json
+# from pygrabber.dshow_graph import FilterGraph
 from kivy.properties import StringProperty, NumericProperty
+import json
+# import Trainer
 # from kivy.factory import Factory
 
+# resolución aplicacion
 Window.maximize()
 
+# carga de archivos .kv
 Builder.load_file('templates/manager_window.kv')
 Builder.load_file('templates/mainWindow/main_window.kv')
 Builder.load_file('templates/dataSettingWindow/data_setting_window.kv')
+Builder.load_file('templates/dataSettingWindow/append_chatbot_window.kv')
 Builder.load_file('templates/motorWindow/motor_window.kv')
 Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
-
-emoji_selected = ''
-
-"""emoji_json = open('templates/motorWindow/emoji_data.json')
-data = json.load(emoji_json)
-for i in data['emojis_details']:
-    print(i)"""
 
 
 class WindowManager(ScreenManager):
     pass
 
 
+# gestos guardados en MotorWindow
 class EmojiOptions(Button):
     name = StringProperty()
     emoji_link = StringProperty()
@@ -57,12 +56,13 @@ class EmojiOptions(Button):
         global motor_window
         motor_window.ids.control_emojis.image_source = self.emoji_link
         for i in range(19):
-            id_slider = "slider_servo" + str(i)
+            id_slider = "manual_servo" + str(i)
             m_value = "M" + str(i+1)
-            motor_window.ids[str(id_slider)].value = getattr(self,
-                                                             str(m_value))
+            motor_window.ids[str(id_slider)].slider_val = getattr(self,
+                                                                  str(m_value))
 
 
+# popup para seleccion de emoji
 class EmojiWindow(Popup):
     def emoji_selected(self, emoji_id):
         global motor_window
@@ -73,61 +73,80 @@ class EmojiWindow(Popup):
         motor_window.ids.emoji.emoji_selected = emoji_id
 
 
+# popup de settings
 class SettingWindow(Popup):
     def spinner_clicked(self, value):
         pass
 
     def values_array(self):
-        devices = FilterGraph().get_input_devices()
+        """devices = FilterGraph().get_input_devices()
         available_cameras = {}
         available_cameras_label = []
         for device_index, device_name in enumerate(devices):
             available_cameras[device_index] = device_name
-            available_cameras_label.append(device_name)
+            available_cameras_label.append(device_name)"""
+        available_cameras_label = ["Logitec", "Prueba 1", "internal"]
         return available_cameras_label
 
     def conectar_com(self):
         pass
 
 
+# ventana principal
 class MainWindow(Screen):
     pass
 
 
+# objeto de servo en MotorWindow
+class ManualServo(BoxLayout):
+    file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
+    file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
+
+    min_val = StringProperty("0")
+    max_val = StringProperty("180")
+    servo_angle_text = StringProperty()
+    servo_nombre = StringProperty("Servo 1")
+    cuerpo_path = StringProperty(file1)
+    movil_path = StringProperty(file2)
+    servo_angle = NumericProperty()
+    pos_x_brazo = NumericProperty(.48)
+    pos_y_brazo = NumericProperty(.17)
+    pos_x_text = NumericProperty(.467)
+    pos_y_text = NumericProperty(.53)
+    slider_val = NumericProperty()
+
+    def slider_func(self, value):
+        self.servo_angle = int(value)
+        self.servo_angle_text = f'{int(value)}°'
+        self.slider_val = int(value)
+
+
+# MotorWindow, ventana control manual de motores
 class MotorWindow(Screen):
-    def send_gesto(self):
-        pass
-
-    def new_emoji_data(self, name, emoji, motores):
-        json_string = {
-            "nombre": name,
-            "emoji": emoji,
-            "M1": int(motores[0]),
-            "M2": int(motores[1]),
-            "M3": int(motores[2]),
-            "M4": int(motores[3]),
-            "M5": int(motores[4]),
-            "M6": int(motores[5]),
-            "M7": int(motores[6]),
-            "M8": int(motores[7]),
-            "M9": int(motores[8]),
-            "M10": int(motores[9]),
-            "M11": int(motores[10]),
-            "M12": int(motores[11]),
-            "M13": int(motores[12]),
-            "M14": int(motores[13]),
-            "M15": int(motores[14]),
-            "M16": int(motores[15]),
-            "M17": int(motores[16]),
-            "M18": int(motores[17]),
-            "M19": int(motores[18])
-        }
-        return json_string
-
     def on_pre_enter(self):
         global motor_window
+        # valores iniciales de los servos
         motor_window = self
-        self.initial_values()
+        initial_value = [131, 51, 104,
+                         112, 74, 41,
+                         118, 150, 99,
+                         54, 170, 43,
+                         195, 37, 250,
+                         270, 115, 180,
+                         300]
+        for i in range(19):
+            id = "manual_servo" + str(i)
+            value = initial_value[i]
+            self.ids[str(id)].slider_val = value
+        # carga min y max de cada servo
+        file_path = 'templates/dataSettingWindow/servos_data.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+        for servo in servos_list:
+            id = "manual_servo" + servo["id"]
+            self.ids[str(id)].min_val = str(servo["min"])
+            self.ids[str(id)].max_val = str(servo["max"])
+        # carga de emojis almacenados
         emoji_json = open('templates/motorWindow/emoji_data.json')
         data = json.load(emoji_json)
         self.ids.emoji_options.clear_widgets()
@@ -160,14 +179,35 @@ class MotorWindow(Screen):
                 M19=emoji["M19"])
             self.ids.emoji_options.add_widget(new)
 
-    def initial_values(self):
-        for i in range(19):
-            id_slider = "slider_servo" + str(i)
-            id_text = "grados_servo" + str(i)
-            id_angle = "servo_movible" + str(i)
-            value = int(self.ids[str(id_slider)].value)
-            self.ids[str(id_text)].text = f'{int(value)}°'
-            self.ids[str(id_angle)].servo_angle = int(value)
+    def send_gesto(self):
+        pass
+
+    # creación objeto emoji con formato json
+    def new_emoji_data(self, name, emoji, motores):
+        json_string = {
+            "nombre": name,
+            "emoji": emoji,
+            "M1": int(motores[0]),
+            "M2": int(motores[1]),
+            "M3": int(motores[2]),
+            "M4": int(motores[3]),
+            "M5": int(motores[4]),
+            "M6": int(motores[5]),
+            "M7": int(motores[6]),
+            "M8": int(motores[7]),
+            "M9": int(motores[8]),
+            "M10": int(motores[9]),
+            "M11": int(motores[10]),
+            "M12": int(motores[11]),
+            "M13": int(motores[12]),
+            "M14": int(motores[13]),
+            "M15": int(motores[14]),
+            "M16": int(motores[15]),
+            "M17": int(motores[16]),
+            "M18": int(motores[17]),
+            "M19": int(motores[18])
+        }
+        return json_string
 
     def guardar_emoji(self):
         name_emoji = self.ids.nombre.text
@@ -175,11 +215,12 @@ class MotorWindow(Screen):
         self.ids.nombre.text = ""
         motor_values = []
         for i in range(19):
-            id = "slider_servo" + str(i)
-            motor_values.append(int(self.ids[str(id)].value))
-
+            id = "manual_servo" + str(i)
+            motor_values.append(int(self.ids[str(id)].slider_val))
+        # creacion objeto json con valores de motores
         new_emoji = self.new_emoji_data(name_emoji, emoji_selected,
                                         motor_values)
+        # escritura en archivo json
         with open('templates/motorWindow/emoji_data.json', 'r+') as file:
             file_data = json.load(file)
             file_data["emojis_details"].append(new_emoji)
@@ -187,6 +228,7 @@ class MotorWindow(Screen):
             json.dump(file_data, file, indent=4)
         emoji_link_str = ('templates/motorWindow/imagenes/emojis/'
                           + emoji_selected + '.png')
+        # creación de boton para gesto en la ventana
         new = EmojiOptions(
                 text=name_emoji,
                 name=name_emoji,
@@ -215,35 +257,145 @@ class MotorWindow(Screen):
     def menu_pos(self):
         window_size = Window.size
         x_pos = window_size[0] - 250
-        y_pos = 15
-        pos = [x_pos, y_pos]
+        pos = x_pos
         return pos
 
-    def servos_initial_value(self, no_servo):
-        value = [180, 50, 30,
-                 90, 55, 95,
-                 150, 10, 20,
-                 160, 120, 45,
-                 70, 300, 180,
-                 300, 4, 225,
-                 45]
-        return int(value[no_servo])
 
-    def slider_func(self, no_servo, value):
-        id_text = "grados_servo" + str(no_servo)
-        id_angle = "servo_movible" + str(no_servo)
-        self.ids[str(id_text)].text = f'{int(value)}°'
-        self.ids[str(id_angle)].servo_angle = int(value)
+# objeto servo en MotorDataSettingWindow
+class MinMaxServo(BoxLayout):
+    file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
+    file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
+
+    min_val = StringProperty("0")
+    max_val = StringProperty("180")
+    servo_angle_text = StringProperty("90°")
+    servo_nombre = StringProperty("Servo 1")
+    cuerpo_path = StringProperty(file1)
+    movil_path = StringProperty(file2)
+    servo_angle = NumericProperty(90)
+    pos_x_brazo = NumericProperty(.48)
+    pos_y_brazo = NumericProperty(.17)
+    pos_x_text = NumericProperty(.467)
+    pos_y_text = NumericProperty(.53)
+
+    # al presionar enter en las entradas de min o max se actualizan los valores
+    def on_value(self, value, min_max):
+        if min_max == "min":
+            self.min_val = value
+        else:
+            self.max_val = value
+
+    def slider_func(self, value):
+        self.servo_angle = int(value)
+        self.servo_angle_text = f'{int(value)}°'
 
 
+class AppendChatbot(Popup):
+    def append_chatbot(self):
+        file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            chatbot_details = json.load(json_file)
+        tag = self.ids.tag.text
+        patterns_raw = self.ids.patterns.text
+        responses_raw = self.ids.responses.text
+        patterns = patterns_raw.split(",\n")
+        responses = responses_raw.split(",\n")
+        patterns.pop()
+        responses.pop()
+        new_data = {"tag": tag,
+                    "patterns": patterns,
+                    "responses": responses
+                    }
+        with open(file_path, 'r+', encoding='utf-8') as json_file:
+            chatbot_details = json.load(json_file)
+            chatbot_details["intents"].append(new_data)
+            json_file.seek(0)
+            json.dump(chatbot_details, json_file, indent=4, ensure_ascii=False)
+        # Trainer.runTraining()
+        self.dismiss()
+
+
+# ventana para controlar max/min servo y modificar base datos chatbot
 class MotorDataSettingWindow(Screen):
-    pass
+    def on_pre_enter(self):
+        file_path = 'templates/dataSettingWindow/servos_data.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+        for servo in servos_list:
+            id = "min_max_servo" + servo["id"]
+            self.ids[str(id)].min_val = str(servo["min"])
+            self.ids[str(id)].max_val = str(servo["max"])
+
+    def guardar_min_max(self):
+        file_path = 'templates/dataSettingWindow/servos_data.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+            for i in range(19):
+                id = "min_max_servo" + str(i)
+                servos_list[i]["min"] = int(self.ids[str(id)].min_val)
+                servos_list[i]["max"] = int(self.ids[str(id)].max_val)
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json.dump(servos_list, json_file, indent=2)
+
+    def chatbot_data(self):
+        global chatbot_details
+        file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            chatbot_details = json.load(json_file)
+        values = []
+        for intent in chatbot_details["intents"]:
+            values.append(intent["tag"])
+        return values
+
+    def intent_select(self, value):
+        global chatbot_details, intent_old
+        pattern_value = ""
+        response_value = ""
+        pre_pattern_value = self.ids.patterns.text
+        pre_response_value = self.ids.responses.text
+        if (pre_pattern_value != "") and (pre_response_value != ""):
+            for intent in chatbot_details["intents"]:
+                if (intent_old == intent["tag"]):
+                    pattern_array = pre_pattern_value.split(",\n")
+                    response_array = pre_response_value.split(",\n")
+                    pattern_array.pop()
+                    response_array.pop()
+                    intent["patterns"] = pattern_array
+                    intent["responses"] = response_array
+        intent_old = value
+        for intent in chatbot_details["intents"]:
+            if (value == intent["tag"]):
+                for pattern in intent["patterns"]:
+                    pattern_value = pattern_value + pattern + ",\n"
+                for response in intent["responses"]:
+                    response_value = response_value + response + ",\n"
+                self.ids.patterns.text = pattern_value
+                self.ids.responses.text = response_value
+
+    def modificar_chatbot(self):
+        global chatbot_details
+        file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
+        intent_select = self.ids.intent_select.text
+        pattern_value = self.ids.patterns.text
+        response_value = self.ids.responses.text
+        pattern_array = pattern_value.split(",\n")
+        response_array = response_value.split(",\n")
+        pattern_array.pop()
+        response_array.pop()
+        for intent in chatbot_details["intents"]:
+            if (intent_select == intent["tag"]):
+                intent["patterns"] = pattern_array
+                intent["responses"] = response_array
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
+        # Trainer.runTraining()
 
 
-class AwesomeApp(App):
+# aplicación
+class RostroAnimatronico(App):
     def build(self):
         return WindowManager()
 
 
 if __name__ == '__main__':
-    AwesomeApp().run()
+    RostroAnimatronico().run()

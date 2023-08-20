@@ -1,0 +1,151 @@
+#:kivy 1.0
+
+#: import Factory kivy.factory.Factory
+
+#:set backgroundGeneral (204/255, 204/255, 204/255, 1)
+#:set colorUVG (0,141/255,54/255,1)
+
+<AppendChatbot>:
+    auto_dismiss: False
+    size_hint: [.8, .8]
+    title: "Agregar a base de datos Chatbot"
+
+    BoxLayout:
+        orientation: "vertical"
+        background_color: (204/255, 204/255, 204/255, 1)
+        canvas.before:
+            Color:
+                rgba: self.background_color
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        Label:
+            text: ""
+            size_hint: [1, None]
+            height: 30
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "TAG"
+                font_size: 40
+                size_hint: [1, None]
+                height: 50
+                bold: True
+            TextInput:
+                id: tag
+                size_hint: [None, None]
+                width: 400
+                height: 65
+                pos_hint: {'center_x': .5}
+                font_size: 25
+                background_normal: "templates/motorWindow/imagenes/menu/text_input.png"
+                background_active: "templates/motorWindow/imagenes/menu/text_input.png"
+                foreground_color: (1, 1, 1, 1)
+                padding_x: [30, 2]
+                padding_y: [11, 2]
+        Label:
+            text: ""
+            size_hint: [1, None]
+            height: 120
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "PATTERNS"
+                font_size: 40
+                size_hint: [1, None]
+                height: 50
+                bold: True
+            TextInput:
+                id: patterns
+                size_hint: [.55, None]
+                height: 150
+                pos_hint: {'center_x': .5}
+                font_size: 23
+                background_normal: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                background_active: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                foreground_color: (1, 1, 1, 1)
+                padding_x: [35, 35]
+                padding_y: [27, 27]
+        Label:
+            text: ""
+            size_hint: [1, None]
+            height: 120
+        BoxLayout:
+            orientation: "vertical"
+        
+            Label:
+                text: "RESPONSES"
+                font_size: 40
+                size_hint: [1, None]
+                height: 50
+                bold: True
+            TextInput:
+                id: responses
+                size_hint: [.55, None]
+                height: 150
+                pos_hint: {'center_x': .5}
+                font_size: 23
+                background_normal: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                background_active: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                foreground_color: (1, 1, 1, 1)
+                padding_x: [35, 35]
+                padding_y: [27, 27]
+        Label:
+            text: ""
+            size_hint: [1, None]
+            height: 20
+        BoxLayout:
+            orientation: "horizontal"
+            padding: [60, 0]
+            Button:
+                text:"AÑADIR"
+                font_size: 30
+                color: (1, 1, 1, 1)
+                size_hint: [None, None]
+                width: 200
+                height: 75
+                on_press: 
+                    self.rounded_background = (0,117/255,45/255,1)
+                on_release: 
+                    self.rounded_background = (0,141/255,54/255,1)
+                    root.append_chatbot()
+                background_normal: ''
+                background_down: ''
+                background_color: (0, 0, 0, 0)
+                rounded_background: (0,141/255,54/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.rounded_background
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [15]
+            Label:
+                text: ""
+            Button:
+                text:"CANCELAR"
+                font_size: 30
+                color: (1, 1, 1, 1)
+                size_hint: [None, None]
+                width: 200
+                height: 75
+                on_press: 
+                    self.rounded_background = (0,117/255,45/255,1)
+                on_release: 
+                    self.rounded_background = (0,141/255,54/255,1)
+                    root.dismiss()
+                background_normal: ''
+                background_down: ''
+                background_color: (0, 0, 0, 0)
+                rounded_background: (0,141/255,54/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.rounded_background
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [15]
+        Label:
+            text: ""
+            size_hint: [1, None]
+            height: 20
