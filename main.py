@@ -158,7 +158,6 @@ class MainWindow(Screen):
                 data = stream.read(chunk)
                 frames.append(data)
                 print("dummy 1 activo\n")
-                # time.sleep(0.05)
             elif dummy == 2:
                 global res
                 print("dummy 2 activo\n")
@@ -169,7 +168,7 @@ class MainWindow(Screen):
                     bandera_ints = 0
                 print("se genero ints\n")
                 if (bandera_ints == 1):
-                    if (float(ints[0]['probability']) >= 0.3):
+                    if (float(ints[0]['probability']) >= 0.7):
                         print("ints cumplio requisito\n")
                         try:
                             print("se obtuvo respuesta\n")
@@ -177,13 +176,11 @@ class MainWindow(Screen):
                         except ImportError:
                             print("NO se obtuvo respuesta\n")
                             res = "Lo siento, no pude entenderte"
-                        #chatbot.tts(res)
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                     else:
                         print("ints no cumplio el requisito\n")
                         res = "Lo siento, no pude entenderte"
-                        #chatbot.tts(res)
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                 else:
@@ -196,7 +193,6 @@ class MainWindow(Screen):
     def escuchando(self):
         global stream, audio, dummy, evento, frames, formato, canales
         global ratio, chunk
-        print("Se apacho el boton\n")
         audio = pyaudio.PyAudio()
         stream = audio.open(format=formato, channels=canales,
                             rate=ratio, input=True,
@@ -208,7 +204,6 @@ class MainWindow(Screen):
     def finalizar_escuchar(self):
         global stream, audio, evento, user_ask, dummy, res, chatbot_new_messege
         global hablando
-        print("Se solto el boton\n")
 
         evento.clear()
         stream.stop_stream()
@@ -222,14 +217,11 @@ class MainWindow(Screen):
         waveFile.close()
         text_to_speech = 0
         try:
-            print("se logro traducir\n")
             user_ask = chatbot.wave_to_text(wave_name)
             text_to_speech = 1
         except ImportError:
-            print("NO se logro traducir\n")
             user_ask = "Lo siento, no pude entenderte"
         if (text_to_speech == 1):
-            print("agregando mensaje usuario\n")
             self.add_mensaje_usuario(user_ask)
             dummy = 2
             evento.set()
@@ -238,13 +230,11 @@ class MainWindow(Screen):
             evento.clear()
             dummy = 0
             chatbot_new_messege = 0
-            print("se agrego la respuesta del chatbot\n")
             self.add_mensaje_chatbot(res)
         else:
             evento.clear()
             dummy = 0
             self.add_mensaje_chatbot(user_ask)
-            #chatbot.tts(user_ask)
             time.sleep(0.1)
             chatbot_new_messege = 0
         hablando = 1
@@ -598,14 +588,9 @@ class RostroAnimatronico(App):
 
 
 if __name__ == '__main__':
-    # path of the log directory
     Config.set('kivy', 'log_dir', 'your_chosen_log_dir_path')
-    # filename of the log file
     Config.set('kivy', 'log_name', "anything_you_want_%y-%m-%d_%_.log")
-    # Keep log_maxfiles recent logfiles while purging the log directory. Set ‘log_maxfiles’ to -1 to disable logfile purging (eg keep all logfiles).
     Config.set('kivy', 'log_maxfiles', 1000)
-    # minimum log level which is what you need to not see kivy's default info logs
     Config.set('kivy', 'log_level', 'error')
-    # apply all these changes
     Config.write()
     RostroAnimatronico().run()
