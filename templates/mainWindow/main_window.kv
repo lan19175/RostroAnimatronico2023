@@ -98,9 +98,11 @@
             BoxLayout:
                 orientation:"horizontal"
                 size_hint: [1, 0.3]
-                Label:
-                    text: 'FOTO DE LA \nPERSONA'
+                Button:
+                    text: 'HABLALE AL ANIMATRÓNICO'
                     font_size: 30
+                    on_press: root.escuchando()
+                    on_release: root.finalizar_escuchar()
                 Label:
                     text: 'EMOJI DE LA \nEMOCIÓN'
                     font_size: 30

@@ -9,6 +9,10 @@ from kivy.core.window import Window
 # from pygrabber.dshow_graph import FilterGraph
 from kivy.properties import StringProperty, NumericProperty
 import json
+import templates.mainWindow.chatBotP as chatbot
+from threading import Thread, Event
+import pyaudio
+import wave
 # import Trainer
 # from kivy.factory import Factory
 
@@ -25,6 +29,19 @@ Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
 texto_perron = "hola "
 texto_perron_chatbot = "adios "
+dummy = 0
+evento = Event()
+
+formato = pyaudio.paInt16
+canales = 2
+ratio = 44100
+chunk = 1024
+wave_name = "templates/mainWindow/usuario_speech.wav"
+
+
+frames = []
+dummy = 0
+evento.clear()
 
 
 class WindowManager(ScreenManager):
@@ -109,6 +126,48 @@ class MensajeCelularUsuario(Button):
 
 # ventana principal
 class MainWindow(Screen):
+    def on_pre_enter(self):
+        global main_window, t1, event
+        main_window = self
+
+    def on_pre_leave(self):
+        global event
+        evento.clear()
+
+    def chatBotDo(self):
+        while (1):
+            global dummy, frames, evento, stream
+            if dummy == 1:
+                data = stream.read(chunk)
+                frames.append(data)
+            evento.wait()
+
+    def escuchando(self):
+        global stream, audio, dummy, evento, frames, formato, canales
+        global ratio, chunk
+        audio = pyaudio.PyAudio()
+        stream = audio.open(format=formato, channels=canales,
+                            rate=ratio, input=True,
+                            frames_per_buffer=chunk)
+        frames = []
+        dummy = 1
+        evento.set()
+
+    def finalizar_escuchar(self):
+        global stream, audio, evento
+        evento.clear()
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
+        waveFile = wave.open(wave_name, 'wb')
+        waveFile.setnchannels(canales)
+        waveFile.setsampwidth(audio.get_sample_size(formato))
+        waveFile.setframerate(ratio)
+        waveFile.writeframes(b''.join(frames))
+        waveFile.close()
+        text = chatbot.wave_to_text(wave_name)
+        self.add_mensaje_usuario(text)
+
     def new_mensaje(self, text):
         length = len(text)
         width = length * 12
@@ -127,15 +186,11 @@ class MainWindow(Screen):
                 max_length = max_length + 29
             else:
                 texto_arreglado = texto_arreglado_new
-            print(f'max: {max_length}')
         height = lines * 30
-        print(f'height: {height}')
         return width, height, texto_arreglado
 
-    def add_mensaje_usuario(self):
-        global texto_perron
-        texto_perron = texto_perron + texto_perron
-        [ancho, altura, texto_arreglado] = self.new_mensaje(texto_perron)
+    def add_mensaje_usuario(self, text):
+        [ancho, altura, texto_arreglado] = self.new_mensaje(text)
         new = MensajeCelularUsuario(texto=texto_arreglado,
                                     ancho=ancho,
                                     altura=altura)
@@ -143,14 +198,17 @@ class MainWindow(Screen):
         self.ids.scrollview_celular.scroll_to(new)
 
     def add_mensaje_chatbot(self):
-        global texto_perron_chatbot
+        global texto_perron_chatbot, dummy
         texto_perron_chatbot = texto_perron_chatbot + texto_perron_chatbot
-        [ancho, altura, texto_arreglado] =self.new_mensaje(texto_perron_chatbot)
+        [ancho,
+         altura,
+         texto_arreglado] = self.new_mensaje(texto_perron_chatbot)
         new = MensajeCelularChatbot(texto=texto_arreglado,
                                     ancho=ancho,
                                     altura=altura)
         self.ids.celular.add_widget(new, index=0)
         self.ids.scrollview_celular.scroll_to(new)
+        # dummy = 1
 
 
 # objeto de servo en MotorWindow
@@ -445,6 +503,11 @@ class MotorDataSettingWindow(Screen):
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
         # Trainer.runTraining()
+
+
+# Inicializacion del hilo secundario
+t1 = Thread(target=MainWindow().chatBotDo)
+t1.start()
 
 
 # aplicación
