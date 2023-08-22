@@ -1,3 +1,4 @@
+from kivy.config import Config
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
@@ -9,10 +10,11 @@ from kivy.core.window import Window
 # from pygrabber.dshow_graph import FilterGraph
 from kivy.properties import StringProperty, NumericProperty
 import json
-import templates.mainWindow.chatBotP as chatbot
 from threading import Thread, Event
 import pyaudio
 import wave
+import time
+import templates.mainWindow.chatBotP as chatbot
 # import Trainer
 # from kivy.factory import Factory
 
@@ -31,6 +33,7 @@ texto_perron = "hola "
 texto_perron_chatbot = "adios "
 dummy = 0
 evento = Event()
+hablar = Event()
 
 formato = pyaudio.paInt16
 canales = 2
@@ -38,10 +41,12 @@ ratio = 44100
 chunk = 1024
 wave_name = "templates/mainWindow/usuario_speech.wav"
 
-
+chatbot_new_messege = 0
+hablando = 0
 frames = []
 dummy = 0
 evento.clear()
+hablar.clear()
 
 
 class WindowManager(ScreenManager):
@@ -127,24 +132,71 @@ class MensajeCelularUsuario(Button):
 # ventana principal
 class MainWindow(Screen):
     def on_pre_enter(self):
-        global main_window, t1, event
+        global main_window
         main_window = self
 
     def on_pre_leave(self):
-        global event
-        evento.clear()
+        pass
+
+    def chatBotTalk(self):
+        while (1):
+            global res, hablando
+            print("hilo 2 activo")
+            if (hablando == 1):
+                print("hablando")
+                chatbot.tts(res)
+                time.sleep(.5)
+                hablando = 0
+                hablar.clear()
+            hablar.wait()
 
     def chatBotDo(self):
         while (1):
-            global dummy, frames, evento, stream
+            global dummy, frames, evento, stream, user_ask, chatbot_new_messege
+            print("hilo 1 activo\n")
             if dummy == 1:
                 data = stream.read(chunk)
                 frames.append(data)
+                print("dummy 1 activo\n")
+                # time.sleep(0.05)
+            elif dummy == 2:
+                global res
+                print("dummy 2 activo\n")
+                try:
+                    ints = chatbot.predict_class(user_ask)
+                    bandera_ints = 1
+                except ImportError:
+                    bandera_ints = 0
+                print("se genero ints\n")
+                if (bandera_ints == 1):
+                    if (float(ints[0]['probability']) >= 0.3):
+                        print("ints cumplio requisito\n")
+                        try:
+                            print("se obtuvo respuesta\n")
+                            res = chatbot.get_response(ints, chatbot.intents)
+                        except ImportError:
+                            print("NO se obtuvo respuesta\n")
+                            res = "Lo siento, no pude entenderte"
+                        #chatbot.tts(res)
+                        time.sleep(0.1)
+                        chatbot_new_messege = 1
+                    else:
+                        print("ints no cumplio el requisito\n")
+                        res = "Lo siento, no pude entenderte"
+                        #chatbot.tts(res)
+                        time.sleep(0.1)
+                        chatbot_new_messege = 1
+                else:
+                    print("no se genero bien ints\n")
+                    res = "Lo siento, no pude entenderte"
+                    chatbot_new_messege = 1
+                print("termino dummy 2\n")
             evento.wait()
 
     def escuchando(self):
         global stream, audio, dummy, evento, frames, formato, canales
         global ratio, chunk
+        print("Se apacho el boton\n")
         audio = pyaudio.PyAudio()
         stream = audio.open(format=formato, channels=canales,
                             rate=ratio, input=True,
@@ -154,7 +206,10 @@ class MainWindow(Screen):
         evento.set()
 
     def finalizar_escuchar(self):
-        global stream, audio, evento
+        global stream, audio, evento, user_ask, dummy, res, chatbot_new_messege
+        global hablando
+        print("Se solto el boton\n")
+
         evento.clear()
         stream.stop_stream()
         stream.close()
@@ -165,8 +220,35 @@ class MainWindow(Screen):
         waveFile.setframerate(ratio)
         waveFile.writeframes(b''.join(frames))
         waveFile.close()
-        text = chatbot.wave_to_text(wave_name)
-        self.add_mensaje_usuario(text)
+        text_to_speech = 0
+        try:
+            print("se logro traducir\n")
+            user_ask = chatbot.wave_to_text(wave_name)
+            text_to_speech = 1
+        except ImportError:
+            print("NO se logro traducir\n")
+            user_ask = "Lo siento, no pude entenderte"
+        if (text_to_speech == 1):
+            print("agregando mensaje usuario\n")
+            self.add_mensaje_usuario(user_ask)
+            dummy = 2
+            evento.set()
+            while (chatbot_new_messege != 1):
+                print("esperando a chatbot\n")
+            evento.clear()
+            dummy = 0
+            chatbot_new_messege = 0
+            print("se agrego la respuesta del chatbot\n")
+            self.add_mensaje_chatbot(res)
+        else:
+            evento.clear()
+            dummy = 0
+            self.add_mensaje_chatbot(user_ask)
+            #chatbot.tts(user_ask)
+            time.sleep(0.1)
+            chatbot_new_messege = 0
+        hablando = 1
+        hablar.set()
 
     def new_mensaje(self, text):
         length = len(text)
@@ -197,12 +279,9 @@ class MainWindow(Screen):
         self.ids.celular.add_widget(new, index=0)
         self.ids.scrollview_celular.scroll_to(new)
 
-    def add_mensaje_chatbot(self):
-        global texto_perron_chatbot, dummy
-        texto_perron_chatbot = texto_perron_chatbot + texto_perron_chatbot
-        [ancho,
-         altura,
-         texto_arreglado] = self.new_mensaje(texto_perron_chatbot)
+    def add_mensaje_chatbot(self, text):
+        global dummy
+        [ancho, altura, texto_arreglado] = self.new_mensaje(text)
         new = MensajeCelularChatbot(texto=texto_arreglado,
                                     ancho=ancho,
                                     altura=altura)
@@ -508,6 +587,8 @@ class MotorDataSettingWindow(Screen):
 # Inicializacion del hilo secundario
 t1 = Thread(target=MainWindow().chatBotDo)
 t1.start()
+t2 = Thread(target=MainWindow().chatBotTalk)
+t2.start()
 
 
 # aplicación
@@ -517,4 +598,14 @@ class RostroAnimatronico(App):
 
 
 if __name__ == '__main__':
+    # path of the log directory
+    Config.set('kivy', 'log_dir', 'your_chosen_log_dir_path')
+    # filename of the log file
+    Config.set('kivy', 'log_name', "anything_you_want_%y-%m-%d_%_.log")
+    # Keep log_maxfiles recent logfiles while purging the log directory. Set ‘log_maxfiles’ to -1 to disable logfile purging (eg keep all logfiles).
+    Config.set('kivy', 'log_maxfiles', 1000)
+    # minimum log level which is what you need to not see kivy's default info logs
+    Config.set('kivy', 'log_level', 'error')
+    # apply all these changes
+    Config.write()
     RostroAnimatronico().run()

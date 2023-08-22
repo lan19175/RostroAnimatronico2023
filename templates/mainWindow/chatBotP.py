@@ -13,13 +13,13 @@ import struct
 
 def wave_to_text(file_name):
     global r
-    audio = sr.AudioFile(file_name)
-    with audio as source:
-        audio = r.record(source)
-        try:
+    try:
+        audio = sr.AudioFile(file_name)
+        with audio as source:
+            audio = r.record(source)
             result = r.recognize_google(audio, language='es-GT')
-        except ImportError:
-            result = "Lo siento, no pude entenderte"
+    except ImportError:
+        result = "Lo siento, no pude entenderte"
     return result
 
 
@@ -39,9 +39,10 @@ def lemmaSP(word):
 # Función para convertir de texto a audio
 def tts(phrase):
     engine = pyttsx3.init()
-    engine.setProperty('rate', 125)
+    engine.setProperty('rate', 140)
     engine.say(phrase)
     engine.runAndWait()
+    #del (engine)
     return
 
 
