@@ -43,6 +43,8 @@ wave_name = "templates/mainWindow/usuario_speech.wav"
 
 chatbot_new_messege = 0
 hablando = 0
+# 0 = chatbot, 1 = chatGPT
+modo_intelifencia = 0
 frames = []
 dummy = 0
 evento.clear()
@@ -131,11 +133,9 @@ class MensajeCelularUsuario(Button):
 
 # ventana principal
 class MainWindow(Screen):
-    def on_pre_enter(self):
-        global main_window
-        main_window = self
-
     def on_pre_leave(self):
+        source = 'templates/mainWindow/imagenes/robot_neutral.png'
+        self.ids.chatbot_estado.source = source
         pass
 
     def chatBotTalk(self):
@@ -189,6 +189,25 @@ class MainWindow(Screen):
                     chatbot_new_messege = 1
                 print("termino dummy 2\n")
             evento.wait()
+    
+    def cambio_inteligencia(self):
+        global modo_intelifencia
+        if (modo_intelifencia == 0):
+            modo_intelifencia = 1
+            path = 'templates/mainWindow/imagenes/switch_derecha.png'
+            self.ids.inteligencia.image_source = path
+            self.ids.nombre_inteligencia.text = "INTELIGENCIA \n  ARTIFICIAL"
+            pos_actual = self.ids.nombre_inteligencia.pos
+            pos_nueva = [pos_actual[0], pos_actual[1] + 10]
+            self.ids.nombre_inteligencia.pos = pos_nueva
+        elif (modo_intelifencia == 1):
+            modo_intelifencia = 0
+            path = 'templates/mainWindow/imagenes/switch_izquierda.png'
+            self.ids.inteligencia.image_source = path
+            self.ids.nombre_inteligencia.text = "RED NEURONAL"
+            pos_actual = self.ids.nombre_inteligencia.pos
+            pos_nueva = [pos_actual[0], pos_actual[1] - 10]
+            self.ids.nombre_inteligencia.pos = pos_nueva
 
     def escuchando(self):
         global stream, audio, dummy, evento, frames, formato, canales

@@ -43,7 +43,6 @@
 
 <MainWindow>:
     name: "main"
-
     GridLayout:
         cols: 3
         canvas.before:
@@ -58,20 +57,14 @@
             Label:
                 text: "CAMARA"
                 font_size: 30
-            
-            Button:
-                text: "ESTADO DE MOTORES\n***VER QUE PONER AQUÍ***"
-                font_size: 30
-                
-            Button:
-                text: "CHATBOT"
-                font_size: 30
-        BoxLayout:
-            orientation: "vertical"
-
-            Label:
-                text: 'LOGO UVG'
-                font_size: 30
+            BoxLayout:
+                orientation:'horizontal'
+                Label:
+                    text: 'FOTO TOMADA'
+                    font_size: 30
+                Label:
+                    text: 'EMOJI REPRESENTATIVO'
+                    font_size: 30
             BoxLayout:
                 orientation:'horizontal'
                 Label:
@@ -80,31 +73,99 @@
                 Label:
                     text: 'CUENTA REGRESIVA'
                     font_size: 30
+        BoxLayout:
+            orientation: "vertical"
+            padding: [0, 30]
+            spacing: 75
+            Image:
+                source: 'templates/mainWindow/imagenes/logo001.png'
+                allow_stretch: True
+                size_hint: [None, None]
+                size: [400, 400]
+                pos_hint: {'center_x':.5, 'center_y':.5}
             BoxLayout:
-                orientation:'horizontal'
-                Label:
-                    text: 'IMAGEN ROBOT'
-                    font_size: 30
-                Label:
-                    text: 'SWITCH'
-                    font_size: 30
-                Label:
-                    text: 'IMAGEN CEREBRO'
-                    font_size: 30
+                Image:
+                    source: 'templates/mainWindow/imagenes/red_neuronal.png'
+                    keep_ratio: True
+                    size_hint: [1, None]
+                    height: 200
+                    pos_hint: {'center_x':.5, 'center_y':.5}
+                BoxLayout:
+                    orientation:"vertical"
+
+                    Label:
+                        id: nombre_inteligencia
+                        text: "RED NEURONAL"
+                        font_size: 25
+                        bold: True
+                        pos_hint: {'center_y': 200}
+                    Button:
+                        id: inteligencia
+                        background_normal: ''
+                        background_down: ''
+                        background_color: backgroundGeneral
+                        size_hint: [None, None]
+                        size: [110, 110]
+                        pos_hint: {'center_x':0.5,'center_y': 0.5}
+                        image_source: 'templates/mainWindow/imagenes/switch_izquierda.png'
+                        on_press: root.cambio_inteligencia()
+                        Image: 
+                            source: self.parent.image_source
+                            center_x: self.parent.center_x
+                            center_y: self.parent.center_y
+                    Label:
+                        text: ""
+                Image:
+                    source: 'templates/mainWindow/imagenes/inteligencia_artificial.png'
+                    keep_ratio: True
+                    size_hint: [1, None]
+                    height: 200
+                    pos_hint: {'center_x':.5, 'center_y':.5}
+            Label:
+                text: ""
         BoxLayout:
             orientation: "vertical"
 
             BoxLayout:
                 orientation:"horizontal"
                 size_hint: [1, 0.3]
+                spacing: 50
+                padding: [30, 0]
                 Button:
-                    text: 'HABLALE AL ANIMATRÓNICO'
+                    text: '       HABLALE \n              AL \nANIMATRÓNICO'
                     font_size: 30
-                    on_press: root.escuchando()
-                    on_release: root.finalizar_escuchar()
-                Label:
-                    text: 'EMOJI DE LA \nEMOCIÓN'
-                    font_size: 30
+                    bold: True
+                    color: (1, 1, 1, 1)
+                    size_hint: [None, None]
+                    height: 270
+                    width: 270
+                    pos_hint: {'center_x':.5, 'center_y':.5}
+                    background_normal: ''
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
+                    rounded_background: (0,141/255,54/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.rounded_background
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [150]
+                    on_press: 
+                        self.rounded_background = (0,117/255,45/255,1)
+                        root.ids.chatbot_estado.source = 'templates/mainWindow/imagenes/persona_escuchando.png'
+                        root.escuchando()
+                    on_release: 
+                        root.finalizar_escuchar()
+                        root.ids.chatbot_estado.source = 'templates/mainWindow/imagenes/persona_hablando.png'
+                        self.rounded_background = (0,141/255,54/255,1)
+                Image:
+                    id: chatbot_estado
+                    source: 'templates/mainWindow/imagenes/robot_neutral.png'
+                    size_hint: [None, None]
+                    width: 270
+                    height: 270
+                    pos_hint: {'center_x':.5, 'center_y':.5}
             BoxLayout:
                 orientation: "vertical"
                 size_hint: [1, 0.7]

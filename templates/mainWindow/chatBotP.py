@@ -42,7 +42,6 @@ def tts(phrase):
     engine.setProperty('rate', 140)
     engine.say(phrase)
     engine.runAndWait()
-    #del (engine)
     return
 
 
