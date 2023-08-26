@@ -141,9 +141,7 @@ class MainWindow(Screen):
     def chatBotTalk(self):
         while (1):
             global res, hablando
-            print("hilo 2 activo")
             if (hablando == 1):
-                print("hablando")
                 chatbot.tts(res)
                 time.sleep(.5)
                 hablando = 0
@@ -153,43 +151,36 @@ class MainWindow(Screen):
     def chatBotDo(self):
         while (1):
             global dummy, frames, evento, stream, user_ask, chatbot_new_messege
-            print("hilo 1 activo\n")
             if dummy == 1:
                 data = stream.read(chunk)
                 frames.append(data)
-                print("dummy 1 activo\n")
             elif dummy == 2:
                 global res
-                print("dummy 2 activo\n")
                 try:
                     ints = chatbot.predict_class(user_ask)
                     bandera_ints = 1
                 except ImportError:
                     bandera_ints = 0
-                print("se genero ints\n")
                 if (bandera_ints == 1):
                     if (float(ints[0]['probability']) >= 0.7):
-                        print("ints cumplio requisito\n")
                         try:
-                            print("se obtuvo respuesta\n")
                             res = chatbot.get_response(ints, chatbot.intents)
                         except ImportError:
-                            print("NO se obtuvo respuesta\n")
                             res = "Lo siento, no pude entenderte"
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                     else:
-                        print("ints no cumplio el requisito\n")
+                        
                         res = "Lo siento, no pude entenderte"
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                 else:
-                    print("no se genero bien ints\n")
+                    
                     res = "Lo siento, no pude entenderte"
                     chatbot_new_messege = 1
-                print("termino dummy 2\n")
+                time.sleep(0.05)
             evento.wait()
-    
+
     def cambio_inteligencia(self):
         global modo_intelifencia
         if (modo_intelifencia == 0):
@@ -200,6 +191,7 @@ class MainWindow(Screen):
             pos_actual = self.ids.nombre_inteligencia.pos
             pos_nueva = [pos_actual[0], pos_actual[1] + 10]
             self.ids.nombre_inteligencia.pos = pos_nueva
+
         elif (modo_intelifencia == 1):
             modo_intelifencia = 0
             path = 'templates/mainWindow/imagenes/switch_izquierda.png'
@@ -245,7 +237,7 @@ class MainWindow(Screen):
             dummy = 2
             evento.set()
             while (chatbot_new_messege != 1):
-                print("esperando a chatbot\n")
+                pass
             evento.clear()
             dummy = 0
             chatbot_new_messege = 0

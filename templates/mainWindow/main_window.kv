@@ -54,9 +54,19 @@
         BoxLayout:
             orientation: "vertical"
             
-            Label:
-                text: "CAMARA"
-                font_size: 30
+            BoxLayout:
+                orientation:"vertical"
+                size_hint: [1, None]
+                height: 500
+                canvas.before:
+                    Color:
+                        rgba: colorUVG
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                Label:
+                    text: "CAMARA"
+                    font_size: 30
             BoxLayout:
                 orientation:'horizontal'
                 Label:
@@ -152,7 +162,7 @@
                             pos: self.pos
                             radius: [150]
                     on_press: 
-                        self.rounded_background = (0,117/255,45/255,1)
+                        self.rounded_background = (234/255, 0/255, 0/255, 1)
                         root.ids.chatbot_estado.source = 'templates/mainWindow/imagenes/persona_escuchando.png'
                         root.escuchando()
                     on_release: 
