@@ -7,6 +7,8 @@ from kivy.uix.boxlayout import BoxLayout
 # from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.core.window import Window
+from kivy.clock import Clock
+from kivy.graphics.texture import Texture
 # from pygrabber.dshow_graph import FilterGraph
 from kivy.properties import StringProperty, NumericProperty
 import json
@@ -14,9 +16,14 @@ from threading import Thread, Event
 import pyaudio
 import wave
 import time
+from functools import partial
 import templates.mainWindow.chatBotP as chatbot
+from tensorflow.keras.models import load_model
+from keras.utils import img_to_array
+import cv2
+import numpy as np
 # import Trainer
-# from kivy.factory import Factory
+
 
 # resolución aplicacion
 Window.maximize()
@@ -34,6 +41,7 @@ texto_perron_chatbot = "adios "
 dummy = 0
 evento = Event()
 hablar = Event()
+video = Event()
 
 formato = pyaudio.paInt16
 canales = 2
@@ -49,6 +57,20 @@ frames = []
 dummy = 0
 evento.clear()
 hablar.clear()
+video.clear()
+
+# Haarcascade existente
+face = "templates/mainWindow/emotion_detector/haarcascade.xml"
+# Modelo creado por nosotros
+emotion = "templates/mainWindow/emotion_detector/EmotionDetectionModelElu5.h5"
+
+# Clasificadores implementados
+face_cascade = cv2.CascadeClassifier(face)
+classifier = load_model(emotion)
+
+# Nombre de las clases
+emotion_label = ['Enojo', 'Disgusto', 'Miedo', 'Alegria',
+                 'Neutral', 'Triste', 'Sorpresa']
 
 
 class WindowManager(ScreenManager):
@@ -112,7 +134,7 @@ class SettingWindow(Popup):
         for device_index, device_name in enumerate(devices):
             available_cameras[device_index] = device_name
             available_cameras_label.append(device_name)"""
-        available_cameras_label = ["Logitec", "Prueba 1", "internal"]
+        available_cameras_label = ["Internal Camara", "USB Camara"]
         return available_cameras_label
 
     def conectar_com(self):
@@ -133,12 +155,87 @@ class MensajeCelularUsuario(Button):
 
 # ventana principal
 class MainWindow(Screen):
+    def on_pre_enter(self):
+        global main_window
+        main_window = self
+        video.set()
+
     def on_pre_leave(self):
         source = 'templates/mainWindow/imagenes/robot_neutral.png'
         self.ids.chatbot_estado.source = source
-        pass
+        video.clear()
 
-    def chatBotTalk(self):
+    def emotion_detection(self):
+        # this code is run in a separate thread
+        cam = cv2.VideoCapture(0)
+
+        # start processing loop
+        while (1):
+            ret, frame = cam.read()
+            # convertimos a gris
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # Deteccion de rostros utilizando el clasificador haarcascade
+            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+            for (x, y, w, h) in faces:
+                # Dibuja el rectangulo alrededor del rostro
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 255), 2)
+                roi_gray = gray[y:y+h, x:x+w]
+                roi_gray = cv2.resize(roi_gray,
+                                      (48, 48),
+                                      interpolation=cv2.INTER_AREA)
+                if np.sum([roi_gray]) != 0:
+                    roi = roi_gray.astype('float')/255.0
+                    roi = img_to_array(roi)
+                    roi = np.expand_dims(roi, axis=0)
+
+                    preds = classifier.predict(roi)[0]
+                    label = emotion_label[preds.argmax()]
+                    cv2.putText(frame,
+                                label,
+                                (x-10, y-10),
+                                cv2.FONT_HERSHEY_SIMPLEX,
+                                2,
+                                (255, 255, 255),
+                                2)
+                    """if self.first_screen.ids.Gesto.text == "No hay rostro":
+                        self.first_screen.ids.Gesto.text = label
+                    if self.second_screen.ids.Gesto.text == "No hay rostro":
+                        self.second_screen.ids.Gesto.text = label"""
+                else:
+                    cv2.putText(frame,
+                                'No Face Found',
+                                (20, 20),
+                                cv2.FONT_HERSHEY_SIMPLEX,
+                                2,
+                                (0, 0, 255),
+                                3)
+            Clock.schedule_once(partial(self.display_frame, frame))
+            cv2.waitKey(1)
+            video.wait()
+        cam.release()
+        cv2.destroyAllWindows()
+
+    def display_frame(self, frame, dt):
+        global main_window
+        # display the current video frame in the kivy Image widget
+
+        # create a Texture the correct size and format for the frame
+        texture = Texture.create(size=(frame.shape[1], frame.shape[0]),
+                                 colorfmt='bgr')
+
+        # copy the frame data into the texture
+        texture.blit_buffer(frame.tobytes(order=None),
+                            colorfmt='bgr',
+                            bufferfmt='ubyte')
+
+        # flip the texture (otherwise the video is upside down
+        texture.flip_vertical()
+
+        # actually put the texture in the kivy Image widget
+        main_window.ids.vid.texture = texture
+
+    def chat_bot_talk(self):
         while (1):
             global res, hablando
             if (hablando == 1):
@@ -148,7 +245,7 @@ class MainWindow(Screen):
                 hablar.clear()
             hablar.wait()
 
-    def chatBotDo(self):
+    def chat_bot_do(self):
         while (1):
             global dummy, frames, evento, stream, user_ask, chatbot_new_messege
             if dummy == 1:
@@ -170,12 +267,10 @@ class MainWindow(Screen):
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                     else:
-                        
                         res = "Lo siento, no pude entenderte"
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                 else:
-                    
                     res = "Lo siento, no pude entenderte"
                     chatbot_new_messege = 1
                 time.sleep(0.05)
@@ -586,10 +681,12 @@ class MotorDataSettingWindow(Screen):
 
 
 # Inicializacion del hilo secundario
-t1 = Thread(target=MainWindow().chatBotDo)
+t1 = Thread(target=MainWindow().chat_bot_do)
 t1.start()
-t2 = Thread(target=MainWindow().chatBotTalk)
+t2 = Thread(target=MainWindow().chat_bot_talk)
 t2.start()
+t3 = Thread(target=MainWindow().emotion_detection)
+t3.start()
 
 
 # aplicación

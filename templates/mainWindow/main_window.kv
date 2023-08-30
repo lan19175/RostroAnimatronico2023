@@ -58,15 +58,12 @@
                 orientation:"vertical"
                 size_hint: [1, None]
                 height: 500
-                canvas.before:
-                    Color:
-                        rgba: colorUVG
-                    Rectangle:
-                        size: self.size
-                        pos: self.pos
-                Label:
-                    text: "CAMARA"
-                    font_size: 30
+                Image:
+                    id: vid
+                    size_hint: [.95, .95]
+                    allow_stretch: True  # allow the video image to be scaled
+                    keep_ratio: True  # keep the aspect ratio so people don't look squashed
+                    pos_hint: {"center_x":0.5, "center_y":0.5}
             BoxLayout:
                 orientation:'horizontal'
                 Label:
