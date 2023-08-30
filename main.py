@@ -35,9 +35,9 @@ Builder.load_file('templates/dataSettingWindow/append_chatbot_window.kv')
 Builder.load_file('templates/motorWindow/motor_window.kv')
 Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
-texto_perron = "hola "
-texto_perron_chatbot = "adios "
 dummy = 0
+bandera_camara_seleccion = 0
+camara_selected = 0
 evento = Event()
 hablar = Event()
 video = Event()
@@ -124,7 +124,13 @@ class EmojiWindow(Popup):
 # popup de settings
 class SettingWindow(Popup):
     def spinner_clicked(self, value):
-        pass
+        global camara_selected, bandera_camara_seleccion
+
+        if (value == "Internal Camara"):
+            camara_selected = 0
+        else:
+            camara_selected = 1
+        bandera_camara_seleccion = 1
 
     def values_array(self):
         """devices = FilterGraph().get_input_devices()
@@ -168,12 +174,14 @@ class MainWindow(Screen):
         self.ids.emoji_photo.source = source
 
     def emotion_detection(self):
-        global cam, label
-        # this code is run in a separate thread
+        global cam, label, bandera_camara_seleccion, camara_selected
         cam = cv2.VideoCapture(0)
-
-        # start processing loop
         while (1):
+            if (bandera_camara_seleccion == 1):
+                cam.release()
+                cam = cv2.VideoCapture(camara_selected)
+                bandera_camara_seleccion = 0
+
             ret, frame = cam.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(gray, 1.3, 5)
@@ -198,10 +206,6 @@ class MainWindow(Screen):
                                 2,
                                 (255, 255, 255),
                                 2)
-                    """if self.first_screen.ids.Gesto.text == "No hay rostro":
-                        self.first_screen.ids.Gesto.text = label
-                    if self.second_screen.ids.Gesto.text == "No hay rostro":
-                        self.second_screen.ids.Gesto.text = label"""
                 else:
                     cv2.putText(frame,
                                 'No Face Found',
