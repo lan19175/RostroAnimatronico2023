@@ -19,8 +19,7 @@
             rgba: colorUVG
         RoundedRectangle:
             size: self.size
-            pos: self.pos
-        
+            pos: self.pos     
 
 
 <MensajeCelularChatbot>:
@@ -39,6 +38,10 @@
         RoundedRectangle:
             size: self.size
             pos: self.pos
+
+
+<CountDown>:
+
 
 
 <MainWindow>:
@@ -75,11 +78,42 @@
             BoxLayout:
                 orientation:'horizontal'
                 Label:
-                    text: 'BOTON TOMAR FOTO'
+                    text:""
+                    size_hint: [None, 1]
+                    width: 10
+                Button:
+                    text: '  TOMATE \n      UNA \n     FOTO'
                     font_size: 30
+                    bold: True
+                    color: (1, 1, 1, 1)
+                    size_hint: [None, None]
+                    height: 210
+                    width: 210
+                    pos_hint: {'center_x':.5, 'center_y':.5}
+                    background_normal: ''
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
+                    rounded_background: (0,141/255,54/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.rounded_background
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [130]
+                    on_press: 
+                        self.rounded_background = (0/255, 117/255, 45/255, 1)
+                    on_release: 
+                        root.start()
+                        self.rounded_background = (0,141/255,54/255,1)
                 Label:
-                    text: 'CUENTA REGRESIVA'
-                    font_size: 30
+                    id: countdown_label
+                    text: ""
+                    font_size: 150
+                    bold: True
+                    outline_color: (0,141/255,54/255)
+                    outline_width: 5
+                
         BoxLayout:
             orientation: "vertical"
             padding: [0, 30]

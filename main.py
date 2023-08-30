@@ -4,7 +4,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
-# from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -275,6 +274,25 @@ class MainWindow(Screen):
                     chatbot_new_messege = 1
                 time.sleep(0.05)
             evento.wait()
+
+    def start(self):
+        def countdown_one(dt):
+            self.ids.countdown_label.text = "3"
+            self.ids.countdown_label.font_size = 150
+
+        def countdown_two(dt):
+            self.ids.countdown_label.text = "2"
+
+        def countdown_three(dt):
+            self.ids.countdown_label.text = "1"
+
+        def finish(dt):
+            self.ids.countdown_label.font_size = 75
+
+        Clock.schedule_once(countdown_one, 1)
+        Clock.schedule_once(countdown_two, 2)
+        Clock.schedule_once(countdown_three, 3)
+        Clock.schedule_once(finish, 3.5)
 
     def cambio_inteligencia(self):
         global modo_intelifencia
