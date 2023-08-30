@@ -162,22 +162,23 @@ class MainWindow(Screen):
     def on_pre_leave(self):
         source = 'templates/mainWindow/imagenes/robot_neutral.png'
         self.ids.chatbot_estado.source = source
+        self.ids.photo.reload()
+        source = 'templates/mainWindow/imagenes/photo/sin_emoji.png'
         video.clear()
+        self.ids.emoji_photo.source = source
 
     def emotion_detection(self):
+        global cam, label
         # this code is run in a separate thread
         cam = cv2.VideoCapture(0)
 
         # start processing loop
         while (1):
             ret, frame = cam.read()
-            # convertimos a gris
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # Deteccion de rostros utilizando el clasificador haarcascade
             faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
             for (x, y, w, h) in faces:
-                # Dibuja el rectangulo alrededor del rostro
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 255), 2)
                 roi_gray = gray[y:y+h, x:x+w]
                 roi_gray = cv2.resize(roi_gray,
@@ -217,21 +218,13 @@ class MainWindow(Screen):
 
     def display_frame(self, frame, dt):
         global main_window
-        # display the current video frame in the kivy Image widget
 
-        # create a Texture the correct size and format for the frame
         texture = Texture.create(size=(frame.shape[1], frame.shape[0]),
                                  colorfmt='bgr')
-
-        # copy the frame data into the texture
         texture.blit_buffer(frame.tobytes(order=None),
                             colorfmt='bgr',
                             bufferfmt='ubyte')
-
-        # flip the texture (otherwise the video is upside down
         texture.flip_vertical()
-
-        # actually put the texture in the kivy Image widget
         main_window.ids.vid.texture = texture
 
     def chat_bot_talk(self):
@@ -275,7 +268,24 @@ class MainWindow(Screen):
                 time.sleep(0.05)
             evento.wait()
 
+    def show_picture(self):
+        global cam, main_window, label
+        ret, frame = cam.read()
+        texture = Texture.create(size=(frame.shape[1], frame.shape[0]),
+                                 colorfmt='bgr')
+        texture.blit_buffer(frame.tobytes(order=None),
+                            colorfmt='bgr',
+                            bufferfmt='ubyte')
+        texture.flip_vertical()
+        main_window.ids.photo.texture = texture
+        source = 'templates/mainWindow/imagenes/photo/' + label + '.png'
+        main_window.ids.emoji_photo.source = source
+
     def start(self):
+        def start(dt):
+            self.ids.countdown_label.text = "PREPARATE"
+            self.ids.countdown_label.font_size = 50
+
         def countdown_one(dt):
             self.ids.countdown_label.text = "3"
             self.ids.countdown_label.font_size = 150
@@ -288,11 +298,14 @@ class MainWindow(Screen):
 
         def finish(dt):
             self.ids.countdown_label.font_size = 75
+            self.ids.countdown_label.text = "CHEESE"
+            self.show_picture()
 
         Clock.schedule_once(countdown_one, 1)
         Clock.schedule_once(countdown_two, 2)
         Clock.schedule_once(countdown_three, 3)
         Clock.schedule_once(finish, 3.5)
+        Clock.schedule_once(start, 5.5)
 
     def cambio_inteligencia(self):
         global modo_intelifencia

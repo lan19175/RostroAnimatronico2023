@@ -64,17 +64,29 @@
                 Image:
                     id: vid
                     size_hint: [.95, .95]
-                    allow_stretch: True  # allow the video image to be scaled
-                    keep_ratio: True  # keep the aspect ratio so people don't look squashed
+                    allow_stretch: True
+                    keep_ratio: True
                     pos_hint: {"center_x":0.5, "center_y":0.5}
             BoxLayout:
                 orientation:'horizontal'
                 Label:
-                    text: 'FOTO TOMADA'
-                    font_size: 30
-                Label:
-                    text: 'EMOJI REPRESENTATIVO'
-                    font_size: 30
+                    text:""
+                    size_hint: [None, 1]
+                    width: 10
+                Image:
+                    id: photo
+                    source: 'templates/mainWindow/imagenes/ante_foto.png'
+                    size_hint: [.95, .95]
+                    allow_stretch: True
+                    keep_ratio: True
+                    pos_hint: {"center_x":0.5, "center_y":0.5}
+                Image:
+                    id: emoji_photo
+                    source: 'templates/mainWindow/imagenes/photo/sin_emoji.png'
+                    size_hint: [.95, .95]
+                    allow_stretch: True
+                    keep_ratio: True
+                    pos_hint: {"center_x":0.5, "center_y":0.5}
             BoxLayout:
                 orientation:'horizontal'
                 Label:
@@ -108,8 +120,8 @@
                         self.rounded_background = (0,141/255,54/255,1)
                 Label:
                     id: countdown_label
-                    text: ""
-                    font_size: 150
+                    text: "PREPARATE"
+                    font_size: 50
                     bold: True
                     outline_color: (0,141/255,54/255)
                     outline_width: 5
