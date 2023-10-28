@@ -93,6 +93,62 @@
     height: 450
 
 
+<EmojiOptions@BoxLayout>:
+    orientation: "horizontal"
+    size_hint: [1, None]
+    height: 70
+    Label:
+        text: ""
+        size_hint: [0.1, 1]
+    Button:
+        background_normal: ''
+        background_down: ''
+        background_color: (0, 0, 0, 0)
+        color_background: (0,141/255,54/255,1)
+        canvas.before:
+            Color:
+                rgba: self.color_background
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [25]
+        font_size: 21
+        text: root.name
+        size_hint: [None, 1]
+        width: 300
+        on_press: 
+            self.color_background = colorUVGPress
+        on_release: 
+            self.color_background = colorUVG
+            root.emoji_press()
+    Label:
+        text: ""
+    Button:
+        text:"X"
+        font_size: 30
+        size_hint: [None, 1]
+        width: 80
+        background_normal: ''
+        background_down: ''
+        background_color: (0, 0, 0, 0)
+        color_background: (.96, .23, .23, 1)
+        canvas.before:
+            Color:
+                rgba: self.color_background
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [25]
+        on_press: 
+            self.color_background = (.84, .02, .02, 1)
+        on_release: 
+            self.color_background = (.96, .23, .23, 1)
+            root.delete_emoji()
+    Label:
+        text: ""
+        size_hint: [0.1, 1]
+
+
 # Pantlla Motor
 <MotorWindow>:
     name: "motor"

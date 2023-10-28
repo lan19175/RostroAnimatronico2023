@@ -8,22 +8,6 @@
 #:set colorUVG (0,141/255,54/255,1)
 #:set colorUVGPress (0/255, 117/255, 45/255, 1)
 
-
-<EmojiOptions>:
-    background_normal: ''
-    background_down: ''
-    background_color: colorUVG
-    text:""
-    font_size: 21
-    size_hint: [0.8, None]
-    heigth: 60 
-    on_press: 
-        self.background_color = colorUVGPress
-    on_release: 
-        self.background_color = colorUVG
-        root.emoji_press()
-
-
 <EmojiButton@Button>:
     background_normal: ''
     background_down: ''

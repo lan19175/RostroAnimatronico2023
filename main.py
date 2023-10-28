@@ -74,7 +74,7 @@ class WindowManager(ScreenManager):
 
 
 # gestos guardados en MotorWindow
-class EmojiOptions(Button):
+class EmojiOptions(BoxLayout):
     name = StringProperty()
     emoji_link = StringProperty()
     M1 = NumericProperty()
@@ -105,6 +105,48 @@ class EmojiOptions(Button):
             m_value = "M" + str(i+1)
             motor_window.ids[str(id_slider)].slider_val = getattr(self,
                                                                   str(m_value))
+
+    def delete_emoji(self):
+        global motor_window
+        file_path = 'templates/motorWindow/emoji_data.json'
+        emoji_json = open(file_path)
+        data = json.load(emoji_json)
+        indexx = 0
+        for emoji in data['emojis_details']:
+            if self.name == emoji["nombre"]:
+                del data['emojis_details'][indexx]
+                with open(file_path, 'w', encoding='utf-8') as json_file:
+                    json.dump(data, json_file, indent=4)
+            else:
+                indexx += 1
+        motor_window.ids.emoji_options.clear_widgets()
+        for emoji in data['emojis_details']:
+            emoji_name = str(emoji["emoji"])
+            emoji_link_str = ('templates/motorWindow/imagenes/emojis/'
+                              + emoji_name + '.png')
+            new = EmojiOptions(
+                name=emoji["nombre"],
+                emoji_link=emoji_link_str,
+                M1=emoji["M1"],
+                M2=emoji["M2"],
+                M3=emoji["M3"],
+                M4=emoji["M4"],
+                M5=emoji["M5"],
+                M6=emoji["M6"],
+                M7=emoji["M7"],
+                M8=emoji["M8"],
+                M9=emoji["M9"],
+                M10=emoji["M10"],
+                M11=emoji["M11"],
+                M12=emoji["M12"],
+                M13=emoji["M13"],
+                M14=emoji["M14"],
+                M15=emoji["M15"],
+                M16=emoji["M16"],
+                M17=emoji["M17"],
+                M18=emoji["M18"],
+                M19=emoji["M19"])
+            motor_window.ids.emoji_options.add_widget(new)
 
 
 # popup para seleccion de emoji
@@ -477,7 +519,6 @@ class MotorWindow(Screen):
             emoji_link_str = ('templates/motorWindow/imagenes/emojis/'
                               + emoji_name + '.png')
             new = EmojiOptions(
-                text=emoji["nombre"],
                 name=emoji["nombre"],
                 emoji_link=emoji_link_str,
                 M1=emoji["M1"],
@@ -552,7 +593,6 @@ class MotorWindow(Screen):
                           + emoji_selected + '.png')
         # creación de boton para gesto en la ventana
         new = EmojiOptions(
-                text=name_emoji,
                 name=name_emoji,
                 emoji_link=emoji_link_str,
                 M1=motor_values[0],
