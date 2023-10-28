@@ -1,0 +1,60 @@
+{
+    "emotions": [
+        {
+            "tag": "Enojo",
+            "responses": [
+                "¿Por qué estás enojado?'",
+                "Haz unos ejercicios de respiración, no queremos problemas",
+                "Si quieres desahogarte, puedes gritarme un poco?"
+            ]
+        },
+        {
+            "tag": "Disgusto",
+            "responses": [
+                "¿Por qué estás disgustado?",
+                "No soy tan feo, respétame",
+                "Quita esa cara de disgusto"
+            ]
+        },
+        {
+            "tag": "Miedo",
+            "responses": [
+                "¿Por qué estás asustado?",
+                "¿A caso viste un fantasma?",
+                "¿Estoy feo o por qué te asusté?"
+            ]
+        },
+        {
+            "tag": "Alegria",
+            "responses": [
+                "¿Por qué estás feliz?",
+                "Me alegra verte alegre",
+                "Veo que tu día va muy bien"
+            ]
+        },
+        {
+            "tag": "Neutral",
+            "responses": [
+                "¿Por qué tan serio amigo?",
+                "¿Estamos en un concurso de serios?",
+                "Se ve que eres una persona muy calculadora"
+            ]
+        },
+        {
+            "tag": "Triste",
+            "responses": [
+                "¿Por qué estás triste?",
+                "¿Qué es un lodo?... Un pajado vede",
+                "¿Dondé viven los michis?... En Michigan"
+            ]
+        },
+        {
+            "tag": "Sorpresa",
+            "responses": [
+                "¿Por qué estás sorprendido?",
+                "¿Qué? ¿Nunca habías visto un rostro?",
+                "Lo sé, es increíble lo que la tecnología puede lograr"
+            ]
+        }
+    ]
+}

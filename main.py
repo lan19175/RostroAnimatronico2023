@@ -1,3 +1,10 @@
+import json
+import cv2
+import pyaudio
+import wave
+import time
+import random
+
 from kivy.config import Config
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -8,21 +15,46 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
-# from pygrabber.dshow_graph import FilterGraph
 from kivy.properties import StringProperty, NumericProperty
-import json
 from threading import Thread, Event
-import pyaudio
-import wave
-import time
 from functools import partial
-import templates.mainWindow.chatBotP as chatbot
 from tensorflow.keras.models import load_model
 from keras.utils import img_to_array
-import cv2
 import numpy as np
+
+import templates.mainWindow.chatBotP as chatbot
 # import Trainer
 
+# variables a utilizar
+dummy = 0
+bandera_camara_seleccion = 0
+camara_selected = 0
+chatbot_new_messege = 0
+hablando = 0
+modo_intelifencia = 0  # 0 = chatbot, 1 = chatGPT
+frames = []
+
+evento = Event()
+hablar = Event()
+video = Event()
+evento.clear()
+hablar.clear()
+video.clear()
+
+# variables para crear el archivo de audio
+formato = pyaudio.paInt16
+canales = 1
+ratio = 44100
+chunk = 1024
+wave_name = "templates/mainWindow/usuario_speech.wav"
+
+# visión por computadora
+face = "templates/mainWindow/emotion_detector/haarcascade.xml"
+emotion = "templates/mainWindow/emotion_detector/EmotionDetectionModelElu5.h5"
+face_cascade = cv2.CascadeClassifier(face)
+classifier = load_model(emotion)
+emotion_label = ['Enojo', 'Disgusto', 'Miedo', 'Alegria',
+                 'Neutral', 'Triste', 'Sorpresa']
 
 # resolución aplicacion
 Window.maximize()
@@ -35,41 +67,6 @@ Builder.load_file('templates/dataSettingWindow/append_chatbot_window.kv')
 Builder.load_file('templates/motorWindow/motor_window.kv')
 Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
-dummy = 0
-bandera_camara_seleccion = 0
-camara_selected = 0
-evento = Event()
-hablar = Event()
-video = Event()
-
-formato = pyaudio.paInt16
-canales = 2
-ratio = 44100
-chunk = 1024
-wave_name = "templates/mainWindow/usuario_speech.wav"
-
-chatbot_new_messege = 0
-hablando = 0
-# 0 = chatbot, 1 = chatGPT
-modo_intelifencia = 0
-frames = []
-dummy = 0
-evento.clear()
-hablar.clear()
-video.clear()
-
-# Haarcascade existente
-face = "templates/mainWindow/emotion_detector/haarcascade.xml"
-# Modelo creado por nosotros
-emotion = "templates/mainWindow/emotion_detector/EmotionDetectionModelElu5.h5"
-
-# Clasificadores implementados
-face_cascade = cv2.CascadeClassifier(face)
-classifier = load_model(emotion)
-
-# Nombre de las clases
-emotion_label = ['Enojo', 'Disgusto', 'Miedo', 'Alegria',
-                 'Neutral', 'Triste', 'Sorpresa']
 
 
 class WindowManager(ScreenManager):
@@ -133,12 +130,6 @@ class SettingWindow(Popup):
         bandera_camara_seleccion = 1
 
     def values_array(self):
-        """devices = FilterGraph().get_input_devices()
-        available_cameras = {}
-        available_cameras_label = []
-        for device_index, device_name in enumerate(devices):
-            available_cameras[device_index] = device_name
-            available_cameras_label.append(device_name)"""
         available_cameras_label = ["Internal Camara", "USB Camara"]
         return available_cameras_label
 
@@ -222,7 +213,6 @@ class MainWindow(Screen):
 
     def display_frame(self, frame, dt):
         global main_window
-
         texture = Texture.create(size=(frame.shape[1], frame.shape[0]),
                                  colorfmt='bgr')
         texture.blit_buffer(frame.tobytes(order=None),
@@ -273,7 +263,7 @@ class MainWindow(Screen):
             evento.wait()
 
     def show_picture(self):
-        global cam, main_window, label
+        global cam, main_window, label, hablando, res
         ret, frame = cam.read()
         texture = Texture.create(size=(frame.shape[1], frame.shape[0]),
                                  colorfmt='bgr')
@@ -284,6 +274,14 @@ class MainWindow(Screen):
         main_window.ids.photo.texture = texture
         source = 'templates/mainWindow/imagenes/photo/' + label + '.png'
         main_window.ids.emoji_photo.source = source
+        file_path = 'templates/mainWindow/emotion_detector/respuestas.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            emotion_respuestas = json.load(json_file)
+        for emotion in emotion_respuestas["emotions"]:
+            if (emotion["tag"] == label):
+                res = random.choice(emotion["responses"])
+        hablando = 1
+        hablar.set()
 
     def start(self):
         def start(dt):
@@ -344,7 +342,7 @@ class MainWindow(Screen):
 
     def finalizar_escuchar(self):
         global stream, audio, evento, user_ask, dummy, res, chatbot_new_messege
-        global hablando
+        global hablando, canales
 
         evento.clear()
         stream.stop_stream()
