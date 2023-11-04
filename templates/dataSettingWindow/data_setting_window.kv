@@ -220,7 +220,7 @@
                         center_x: self.parent.center_x
                         center_y: self.parent.center_y   
                 Label:
-                    text: "MODIFICACIÓN MÁXIMOS Y MÍMOS PARA LOS MOTORES"
+                    text: "MODIFICACIÓN MÁXIMOS Y MÍNIMOS PARA LOS MOTORES"
                     font_size: 35
                     bold: True
             ScrollView:
@@ -355,145 +355,246 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .6
+        
         BoxLayout:
             orientation:"vertical"
             size_hint: [0.37, 1]
             padding: [0, 46]
-            Label:
-                text: "MODIFICACIÓN BASE DE DATOS CHATBOT"
-                font_size: 35
-                bold: True
-                size_hint: [1, None]
-                height: 90
-            BoxLayout:
-                orientation:"horizontal"
-                size_hint: [1, None]
-                height: 70
-                spacing: 60
-                padding:[50, 0]
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
                 BoxLayout:
                     orientation:"vertical"
-                    size_hint: [None, None]
-                    pos_hint: {'center_x': 0.35}
-                    height: 70
-                    width: 475
-                    canvas.before:
-                        Color:
-                            rgba: colorUVG
-                        RoundedRectangle:
-                            size: self.size
-                            pos: self.pos
-                            radius: [15]
-                    Spinner:
-                        id: intent_select
+                    size_hint: [1, None]
+                    height: 1550
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 20
+                    Label:
+                        text: "MODIFICACIÓN BASE DE DATOS CHATBOT"
+                        font_size: 35
+                        bold: True
+                        size_hint: [1, None]
+                        height: 90
+                    BoxLayout:
+                        orientation:"horizontal"
+                        size_hint: [1, None]
+                        height: 70
+                        spacing: 60
+                        padding:[50, 0]
+                        BoxLayout:
+                            orientation:"vertical"
+                            size_hint: [None, None]
+                            pos_hint: {'center_x': 0.35}
+                            height: 70
+                            width: 475
+                            canvas.before:
+                                RoundedRectangle:
+                                    source: "templates/dataSettingWindow/imagenes/spinner_complete.png"
+                                    size: self.size
+                                    pos: self.pos
+                                    radius: [15]
+                            Spinner:
+                                id: intent_select
+                                background_normal: ''
+                                background_down: ''
+                                background_color: (0, 0, 0, 0)
+                                size_hint: [None, None]
+                                width: 450
+                                height: 70
+                                text: "Despliegue de la base de datos"
+                                font_size: 25
+                                bold: True
+                                values: root.chatbot_data()
+                                option_cls: Factory.get("ChatbotOptions")
+                                on_text: root.intent_select(self.text)                                
+                        Button:
+                            text:"+"
+                            font_size: 40
+                            color: (1, 1, 1, 1)
+                            size_hint: [None, 1]
+                            width: 70
+                            background_normal: ''
+                            background_down: ''
+                            background_color: (0, 0, 0, 0)
+                            rounded_background: (0,141/255,54/255,1)
+                            canvas.before:
+                                Color:
+                                    rgba: self.rounded_background
+                                RoundedRectangle:
+                                    size: self.size
+                                    pos: self.pos
+                                    radius: [15]
+                            on_press: 
+                                self.rounded_background = (0,117/255,45/255,1)
+                            on_release: 
+                                self.rounded_background = (0,141/255,54/255,1)
+                                Factory.AppendChatbot().open()
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 20
+                    Label:
+                        text: "PATTERNS"
+                        font_size: 40
+                        size_hint: [1, None]
+                        height: 50
+                        bold: True
+                    TextInput:
+                        id: patterns
+                        size_hint: [1, None]
+                        height: 250
+                        font_size: 23
+                        background_normal: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                        background_active: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                        foreground_color: (1, 1, 1, 1)
+                        padding_x: [35,35]
+                        padding_y: [35,35]
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 20
+                    Label:
+                        text: "RESPONSES"
+                        font_size: 40
+                        size_hint: [1, None]
+                        height: 50
+                        bold: True
+                    TextInput:
+                        id: responses
+                        size_hint: [1, None]
+                        height: 250
+                        font_size: 23
+                        background_normal: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                        background_active: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                        foreground_color: (1, 1, 1, 1)
+                        padding_x: [35,35]
+                        padding_y: [35,35]
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 20
+                    Button:
+                        text:"MODIFICAR"
+                        font_size: 30
+                        color: (1, 1, 1, 1)
+                        size_hint: [None, None]
+                        width: 200
+                        height: 75
+                        on_press: 
+                            self.rounded_background = (0,117/255,45/255,1)
+                        on_release: 
+                            self.rounded_background = (0,141/255,54/255,1)
+                            root.modificar_chatbot()
                         background_normal: ''
                         background_down: ''
                         background_color: (0, 0, 0, 0)
-                        size_hint: [None, None]
-                        width: 450
-                        height: 70
-                        text: "Despliegue de la base de datos"
-                        font_size: 25
+                        rounded_background: (0,141/255,54/255,1)
+                        canvas.before:
+                            Color:
+                                rgba: self.rounded_background
+                            RoundedRectangle:
+                                size: self.size
+                                pos: self.pos
+                                radius: [15]
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 50
+                    Label:
+                        text: "   MODIFICACIÓN RESPUESTAS\n        DETECTOR EMOCIONES"
+                        font_size: 35
                         bold: True
-                        values: root.chatbot_data()
-                        option_cls: Factory.get("ChatbotOptions")
-                        on_text: root.intent_select(self.text)
-                    FloatLayout:
-                        size_hint: [0.0005, 1]
-                        Image:
-                            source:"templates/dataSettingWindow/imagenes/spinner_symbol.png"
+                        size_hint: [1, None]
+                        height: 90
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 20
+                    BoxLayout:
+                        orientation:"horizontal"
+                        size_hint: [1, None]
+                        height: 70
+                        spacing: 60
+                        padding:[50, 0]
+                        Label:
+                            text: ""
+                        BoxLayout:
+                            orientation:"vertical"
                             size_hint: [None, None]
-                            size: [15, 15]
-                            pos: [1695, 810]
-                Button:
-                    text:"+"
-                    font_size: 40
-                    color: (1, 1, 1, 1)
-                    size_hint: [None, 1]
-                    width: 70
-                    background_normal: ''
-                    background_down: ''
-                    background_color: (0, 0, 0, 0)
-                    rounded_background: (0,141/255,54/255,1)
-                    canvas.before:
-                        Color:
-                            rgba: self.rounded_background
-                        RoundedRectangle:
-                            size: self.size
-                            pos: self.pos
-                            radius: [15]
-                    on_press: 
-                        self.rounded_background = (0,117/255,45/255,1)
-                    on_release: 
-                        self.rounded_background = (0,141/255,54/255,1)
-                        Factory.AppendChatbot().open()
-            Label:
-                text: ""
-                size_hint: [1, None]
-                height: 20
-            Label:
-                text: "PATTERNS"
-                font_size: 40
-                size_hint: [1, None]
-                height: 50
-                bold: True
-            TextInput:
-                id: patterns
-                size_hint: [1, None]
-                height: 250
-                font_size: 23
-                background_normal: "templates/dataSettingWindow/imagenes/text_input_large.png"
-                background_active: "templates/dataSettingWindow/imagenes/text_input_large.png"
-                foreground_color: (1, 1, 1, 1)
-                padding_x: [35,35]
-                padding_y: [35,35]
-            Label:
-                text: ""
-                size_hint: [1, None]
-                height: 20
-            Label:
-                text: "RESPONSES"
-                font_size: 40
-                size_hint: [1, None]
-                height: 50
-                bold: True
-            TextInput:
-                id: responses
-                size_hint: [1, None]
-                height: 250
-                font_size: 23
-                background_normal: "templates/dataSettingWindow/imagenes/text_input_large.png"
-                background_active: "templates/dataSettingWindow/imagenes/text_input_large.png"
-                foreground_color: (1, 1, 1, 1)
-                padding_x: [35,35]
-                padding_y: [35,35]
-            Label:
-                text: ""
-                size_hint: [1, None]
-                height: 20
-            Button:
-                text:"MODIFICAR"
-                font_size: 30
-                color: (1, 1, 1, 1)
-                size_hint: [None, None]
-                width: 200
-                height: 75
-                on_press: 
-                    self.rounded_background = (0,117/255,45/255,1)
-                on_release: 
-                    self.rounded_background = (0,141/255,54/255,1)
-                    root.modificar_chatbot()
-                background_normal: ''
-                background_down: ''
-                background_color: (0, 0, 0, 0)
-                rounded_background: (0,141/255,54/255,1)
-                canvas.before:
-                    Color:
-                        rgba: self.rounded_background
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-                        radius: [15]
+                            pos_hint: {'center_x': 0.35}
+                            height: 70
+                            width: 475
+                            canvas.before:
+                                RoundedRectangle:
+                                    source: "templates/dataSettingWindow/imagenes/spinner_complete.png"
+                                    size: self.size
+                                    pos: self.pos
+                                    radius: [15]
+                            Spinner:
+                                id: emociones_selection
+                                background_normal: ''
+                                background_down: ''
+                                background_color: (0, 0, 0, 0)
+                                size_hint: [None, None]
+                                width: 450
+                                height: 70
+                                text: "Despliegue de la respuestas"
+                                font_size: 25
+                                bold: True
+                                values: ['Enojo', 'Disgusto', 'Miedo', 'Alegria','Neutral', 'Triste', 'Sorpresa']
+                                option_cls: Factory.get("ChatbotOptions")
+                                on_text: root.respuestas_detector_emociones(self.text)
+                        Label:
+                            text: ""
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 30
+                    Label:
+                        text: "RESPONSES"
+                        font_size: 40
+                        size_hint: [1, None]
+                        height: 50
+                        bold: True
+                    TextInput:
+                        id: respuestas_emociones
+                        size_hint: [1, None]
+                        height: 250
+                        font_size: 23
+                        background_normal: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                        background_active: "templates/dataSettingWindow/imagenes/text_input_large.png"
+                        foreground_color: (1, 1, 1, 1)
+                        padding_x: [35,35]
+                        padding_y: [35,35]
+                    Label:
+                        text: ""
+                        size_hint: [1, None]
+                        height: 20
+                    Button:
+                        text:"MODIFICAR"
+                        font_size: 30
+                        color: (1, 1, 1, 1)
+                        size_hint: [None, None]
+                        width: 200
+                        height: 75
+                        on_press: 
+                            self.rounded_background = (0,117/255,45/255,1)
+                        on_release: 
+                            self.rounded_background = (0,141/255,54/255,1)
+                            root.modificar_emotion_detector()
+                        background_normal: ''
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
+                        rounded_background: (0,141/255,54/255,1)
+                        canvas.before:
+                            Color:
+                                rgba: self.rounded_background
+                            RoundedRectangle:
+                                size: self.size
+                                pos: self.pos
+                                radius: [15]
             # Menu entre pantallas
             FloatLayout:
                 size_hint: [None, 0.00001]

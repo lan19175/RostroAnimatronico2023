@@ -53,8 +53,13 @@ face = "templates/mainWindow/emotion_detector/haarcascade.xml"
 emotion = "templates/mainWindow/emotion_detector/EmotionDetectionModelElu5.h5"
 face_cascade = cv2.CascadeClassifier(face)
 classifier = load_model(emotion)
-emotion_label = ['Enojo', 'Disgusto', 'Miedo', 'Alegria',
-                 'Neutral', 'Triste', 'Sorpresa']
+emotion_label = ['Enojo',
+                 'Disgusto',
+                 'Miedo',
+                 'Alegria',
+                 'Neutral',
+                 'Triste',
+                 'Sorpresa']
 
 # resolución aplicacion
 Window.maximize()
@@ -733,6 +738,18 @@ class MotorDataSettingWindow(Screen):
                     response_value = response_value + response + ",\n"
                 self.ids.patterns.text = pattern_value
                 self.ids.responses.text = response_value
+    
+    def respuestas_detector_emociones(self, value):
+        global emotion_responses
+        file_path = 'templates/mainWindow/emotion_detector/respuestas.json'
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            emotion_responses = json.load(json_file)
+        responses = ""
+        for emotion in emotion_responses["emotions"]:
+            if (value == emotion["tag"]):
+                for respuesta in emotion["responses"]:
+                    responses = responses + respuesta + ",\n"
+                self.ids.respuestas_emociones.text = responses
 
     def modificar_chatbot(self):
         global chatbot_details
@@ -751,6 +768,22 @@ class MotorDataSettingWindow(Screen):
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
         # Trainer.runTraining()
+    
+    def modificar_emotion_detector(self):
+        global emotion_responses
+        file_path = 'templates/mainWindow/emotion_detector/respuestas.json'
+        emotion_selected = self.ids.emociones_selection.text
+        response_value = self.ids.respuestas_emociones.text
+        response_array = response_value.split(",\n")
+        response_array.pop()
+        for emotion in emotion_responses["emotions"]:
+            if emotion_selected == emotion["tag"]:
+                emotion["responses"] = response_array
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json.dump(emotion_responses,
+                      json_file,
+                      ensure_ascii=False,
+                      indent=4)
 
 
 # Inicializacion del hilo secundario
