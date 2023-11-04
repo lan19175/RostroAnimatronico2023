@@ -69,6 +69,7 @@ Builder.load_file('templates/manager_window.kv')
 Builder.load_file('templates/mainWindow/main_window.kv')
 Builder.load_file('templates/dataSettingWindow/data_setting_window.kv')
 Builder.load_file('templates/dataSettingWindow/append_chatbot_window.kv')
+Builder.load_file('templates/dataSettingWindow/popUp_instrucciones.kv')
 Builder.load_file('templates/motorWindow/motor_window.kv')
 Builder.load_file('templates/motorWindow/emoji_window.kv')
 Builder.load_file('templates/settingsWindow/settings_popup.kv')
@@ -682,8 +683,29 @@ class AppendChatbot(Popup):
         self.dismiss()
 
 
+class Instrucciones(Popup):
+    instr_min = "Pasos para modificar los mínimos y máximos de un motor:\n"\
+                "1. Seleccionar la cassilla que se desea modificar\n"\
+                "2. Borrar el valor actual y colocar el valor deseado\n"\
+                "3. Presionar la tecla enter para guardar el valor\n"\
+                 "4. Realizar los pasos anteriores con cada valor que se "\
+                "desea modificar\n"\
+                "5. Una vez realziado todos los cambios, presionar el "\
+                "botón de guardar"
+    instr_chatbot_mod = "Pasos para modificar una categoría en específico:\n"\
+                        "1. Seleccionar la categoría que se desea modificar\n"\
+                        "2. borrar la línea que se desea ya sea en PATTERNS o"\
+                        " en RESPONSES\nsin borrar la coma\n"\
+                        "3. Agregar la oración nueva que se desea adelante de"\
+                        " la coma\n"\
+                        "4. Presionar el boton de modificar"
+
+
 # ventana para controlar max/min servo y modificar base datos chatbot
 class MotorDataSettingWindow(Screen):
+    def on_enter(self):
+        pass
+
     def on_pre_enter(self):
         file_path = 'templates/dataSettingWindow/servos_data.json'
         with open(file_path, 'r', encoding='utf-8') as json_file:
@@ -738,7 +760,7 @@ class MotorDataSettingWindow(Screen):
                     response_value = response_value + response + ",\n"
                 self.ids.patterns.text = pattern_value
                 self.ids.responses.text = response_value
-    
+
     def respuestas_detector_emociones(self, value):
         global emotion_responses
         file_path = 'templates/mainWindow/emotion_detector/respuestas.json'
@@ -768,7 +790,7 @@ class MotorDataSettingWindow(Screen):
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
         # Trainer.runTraining()
-    
+
     def modificar_emotion_detector(self):
         global emotion_responses
         file_path = 'templates/mainWindow/emotion_detector/respuestas.json'

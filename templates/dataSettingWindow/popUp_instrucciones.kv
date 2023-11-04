@@ -1,1 +1,30 @@
 #:kivy 1.0
+<Instrucciones>:
+    auto_dismiss: True
+    size_hint: [.6, .6]
+    title: "Instrucciones para la modificación del rostro animatrónico"
+    BoxLayout:
+        orientation: "vertical"
+        background_color: (204/255, 204/255, 204/255, 1)
+        canvas.before:
+            Color:
+                rgba: self.background_color
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        Label:
+            text: "MODIFICACIÓN MÁXIMOS Y MÍNIMOS"
+            font_size: 35
+            bold: True
+        Label:
+            text: root.instr_min
+            color: (0, 0, 0, 1)
+            font_size: 25
+        Label:
+            text: "MODIFICACIÓN BASE DE DATOS CHATBOT"
+            font_size: 35
+            bold: True
+        Label:
+            text: root.instr_chatbot_mod
+            color: (0, 0, 0, 1)
+            font_size: 25
