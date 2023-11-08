@@ -699,6 +699,15 @@ class Instrucciones(Popup):
                         "3. Agregar la oración nueva que se desea adelante de"\
                         " la coma\n"\
                         "4. Presionar el boton de modificar"
+    instr_emociones_mod = "Pasos para modificar las respuestas del "\
+                          "detector de emociones:\n"\
+                          "1. Seleccionar la categoría que se desea"\
+                          " modificar\n"\
+                          "2. borrar la línea que se desea modificar"\
+                          " sin borrar la coma\n"\
+                          "3. Agregar la oración nueva que se desea adelante"\
+                          " de la coma\n"\
+                          "4. Presionar el boton de modificar"
 
 
 # ventana para controlar max/min servo y modificar base datos chatbot
