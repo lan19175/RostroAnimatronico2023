@@ -23,7 +23,7 @@ from keras.utils import img_to_array
 import numpy as np
 
 import templates.mainWindow.chatBotP as chatbot
-# import Trainer
+import Trainer
 
 # variables a utilizar
 dummy = 0
@@ -184,6 +184,16 @@ class SettingWindow(Popup):
     def conectar_com(self):
         pass
 
+    def cerrar_app(self):
+        global cam
+        App.get_running_app().stop()
+        Window.close()
+        evento.clear()
+        hablar.clear()
+        video.clear()
+        cam.release()
+        cv2.destroyAllWindows()
+
 
 class MensajeCelularChatbot(Button):
     texto = StringProperty()
@@ -282,6 +292,7 @@ class MainWindow(Screen):
     def chat_bot_do(self):
         while (1):
             global dummy, frames, evento, stream, user_ask, chatbot_new_messege
+            file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
             if dummy == 1:
                 data = stream.read(chunk)
                 frames.append(data)
@@ -295,7 +306,9 @@ class MainWindow(Screen):
                 if (bandera_ints == 1):
                     if (float(ints[0]['probability']) >= 0.7):
                         try:
-                            res = chatbot.get_response(ints, chatbot.intents)
+                            intents = json.loads(open(file_path,
+                                                 encoding="utf-8").read())
+                            res = chatbot.get_response(ints, intents)
                         except ImportError:
                             res = "Lo siento, no pude entenderte"
                         time.sleep(0.1)
@@ -679,7 +692,7 @@ class AppendChatbot(Popup):
             chatbot_details["intents"].append(new_data)
             json_file.seek(0)
             json.dump(chatbot_details, json_file, indent=4, ensure_ascii=False)
-        # Trainer.runTraining()
+        Trainer.runTraining()
         self.dismiss()
 
 
@@ -798,7 +811,7 @@ class MotorDataSettingWindow(Screen):
                 intent["responses"] = response_array
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
-        # Trainer.runTraining()
+        Trainer.runTraining()
 
     def modificar_emotion_detector(self):
         global emotion_responses

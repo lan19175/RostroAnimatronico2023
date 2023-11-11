@@ -13,6 +13,7 @@
     size_hint: [.7, .7]
     title: "Configuración"
     BoxLayout:
+        orientation:"vertical"
         background_color: (204/255, 204/255, 204/255, 1)
         canvas.before:
             Color:
@@ -20,9 +21,6 @@
             Rectangle:
                 size: self.size
                 pos: self.pos
-        orientation: "vertical"
-        
-        
         BoxLayout:
             orientation: "horizontal"
             Image:
@@ -55,19 +53,12 @@
                     on_release: 
                         self.background_color = (1, 0, 0, 1)
                         root.dismiss()
-        
-        Label:
-            text: '' 
-            size_hint: None, None
-            height: -100
-
-        GridLayout:
-            cols: 7
+        BoxLayout:
+            orientation:"horizontal"
             Label:
                 text:''
-                size_hint: [None, None]
+                size_hint: [None, 1]
                 width: 200
-
             Label:
                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                 size_hint: None, None
@@ -75,15 +66,15 @@
                 text: "     Ingrese el port para \nconectarse con el Rostro"
                 font_size: 45
                 color: colorUVG
-
             Label:
                 text:''
-                
+                size_hint: [None, 1]
+                width: 200
             FloatLayout:
                 TextInput:
                     id: COM
                     input_filter: "int"
-                    pos_hint: {'center_x':0.5, 'center_y': 0.1}
+                    pos_hint: {'center_x':0.1, 'center_y': 0.5}
                     size_hint: [None, None]
                     size: [95, 70]
                     font_size: 30
@@ -94,9 +85,8 @@
                     padding_y: [17,0]
             Label:
                 text:''
-                size_hint: [None, None]
+                size_hint: [None, 1]
                 width: 75
-            
             FloatLayout:
                 Button:
                     id: "buscar_port"
@@ -108,18 +98,15 @@
                     font_size: 40
                     size_hint: [None, None]
                     size: [200, 50]
-                    pos_hint: {'center_x':0.5, 'center_y':0.1}
-
+                    pos_hint: {'center_x':0.5, 'center_y':0.5}
             Label:
                 text:''
-                size_hint: [None, None]
+                size_hint: [None, 1]
                 width: 200
-
         Label:
             text: '' 
-            size_hint: [None, None]
-            height: 75
-
+            size_hint: [1, None]
+            height: 40
         Spinner:
             id: spinner_id
             background_normal: ''
@@ -133,6 +120,24 @@
             values: root.values_array()
             on_text: root.spinner_clicked(spinner_id.text)
             option_cls: Factory.get("CustomSpinnerOptions")
-
         Label:
-            text: '' 
+            text: ''
+            size_hint: [1, None]
+            height: 40
+        Button:
+            pos_hint: {'center_x':0.5, 'center_y':0.5}
+            text: "Cerrar App"
+            background_normal: ''
+            background_down: ''
+            background_color: (.96, .23, .23, 1)
+            font_size: 40
+            size_hint: [None, None]
+            size: [200, 50]
+            on_press: self.background_color = (.84, .02, .02, 1)
+            on_release: 
+                self.background_color = (1, 0, 0, 1)
+                root.cerrar_app()
+        Label:
+            text: ''
+            size_hint: [1, None]
+            height: 100
