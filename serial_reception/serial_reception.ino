@@ -1,133 +1,70 @@
-/*******************************************************************************
-* Copyright (c) 2016, ROBOTIS CO., LTD.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-* * Redistributions of source code must retain the above copyright notice, this
-*   list of conditions and the following disclaimer.
-*
-* * Redistributions in binary form must reproduce the above copyright notice,
-*   this list of conditions and the following disclaimer in the documentation
-*   and/or other materials provided with the distribution.
-*
-* * Neither the name of ROBOTIS nor the names of its
-*   contributors may be used to endorse or promote products derived from
-*   this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*******************************************************************************/
-#include <ArduinoJson.h>
-/*
- * Serial_HelloWorld
-*/
-String x;
+#include <Servo.h>
+
+// Define el pin al que está conectado el servo
+int servoPin1 = 9;
+int servoPin2 = 10;
+int servoPin3 = 11;
+int servoPin4 = 5;
+
+int servoGrados1 = 0;
+int servoGrados2 = 0;
+int servoGrados3 = 0;
+int servoGrados4 = 0;
+
 char inbyte = 0;
-int bandera_escuchando = 0;
-int bandera_select_variable = 0;
-char  inst_servo1[7];
-char  inst_servo19[133];
-int index_inst_servo1 = 0;
-int imprimir = 0;
+String inbyteString;
+String protocoloCase;
 String  payload;
-String intent;
-int response;
-int resultado;
-DynamicJsonDocument doc(2048);
-DeserializationError error;
+char motorNameSeparator = ':';
+
+// Crea un objeto de tipo Servo
+Servo miServo;
+Servo miServo2;
+Servo miServo3;
+Servo miServo4;
 
 void setup() {
-  Serial.begin(9600);
+  // Inicializa el objeto Servo
+  miServo.attach(servoPin1);
+  miServo2.attach(servoPin2);
+  miServo3.attach(servoPin3);
+  miServo4.attach(servoPin4);
+  Serial.begin(115200);
 }
 
 void loop() {
- if (Serial.available()){
+   if (Serial.available()){
     inbyte = Serial.read();
-    x = String(inbyte);
-  }
- if (x == "<"){
-     bandera_escuchando = 1;
-     index_inst_servo1 = 0;
-     bandera_select_variable = 0;
-     memset(inst_servo1, 0, sizeof(inst_servo1));
-     memset(inst_servo19, 0, sizeof(inst_servo19));
-  }
-  
-  while (bandera_escuchando == 1){
-    if (Serial.available()){
-      inbyte = Serial.read();
-      x = String(inbyte);
-      if (x == ">"){
-        bandera_escuchando = 0;
-        bandera_select_variable = 0;
-        imprimir = 1;
-      }else if(x == "<"){
-        imprimir = 0;
-        resultado = 0;
-      }else if (x == "#"){
-        bandera_select_variable = 1;
-        resultado = 1;
-      }else if (x == "&"){
-        bandera_select_variable = 2;
-        resultado = 2;
-      }else if (x == "%"){
-        resultado = 3;
-        if (bandera_select_variable == 3){
-          bandera_select_variable = 4;
-          resultado = 4;
-        }
-        bandera_select_variable = 3;
-      }else{
-        if (bandera_select_variable == 1){
-          inst_servo1[index_inst_servo1] = inbyte;
-        }else if (bandera_select_variable == 2){
-          inst_servo19[index_inst_servo1] = inbyte;
-        }else if (bandera_select_variable == 3){
-          payload = Serial.readStringUntil( '\n' );
-          error = deserializeJson(doc, payload);
-        }else if (bandera_select_variable == 4){
-          response = x.toInt();
-          intent = Serial.readStringUntil( '\n' );
-        }
-        index_inst_servo1++;
-      }
-    }
-  }
-  if (imprimir == 1){
-    if (resultado == 1){
-      Serial.print(inst_servo1);
-      Serial.print("*");
-    }else if (resultado == 2){
-      Serial.println(inst_servo19);
-      Serial.print("*");
-    }else if (resultado == 3){
-      if (error){
-        Serial.println("hubo error*");
-      }else{
-        if(doc["Despedida"][0] == "Bye"){
-          Serial.print("recibido responses*");
+    inbyteString = String(inbyte);
+    if (inbyteString == "<"){
+      payload = Serial.readStringUntil( '>' );
+      protocoloCase = String(payload.charAt(0));
+      if (protocoloCase == "#"){
+        int separatorIndex = 0;
+        separatorIndex = payload.indexOf(motorNameSeparator);
+        String motorName = payload.substring(1, separatorIndex);
+        if(motorName == "M1"){
+          String valorMotor = payload.substring(separatorIndex+1, payload.length());
+          servoGrados1 = valorMotor.toInt();
+        }else if (motorName == "M2"){
+          String valorMotor = payload.substring(separatorIndex+1, payload.length());
+          servoGrados2 = valorMotor.toInt();
+        }else if (motorName == "M3"){
+          String valorMotor = payload.substring(separatorIndex+1, payload.length());
+          servoGrados3 = valorMotor.toInt();
         }else{
-          Serial.print("no se recibio bien el mensaje*");
+          String valorMotor = payload.substring(separatorIndex+1, payload.length());
+          servoGrados4 = valorMotor.toInt();
         }
-        
+      }else{
+        Serial.println("no existe el caso");
       }
-    }else if (resultado == 4){
-      const char* hablando = doc["Despedida"][0];
-      Serial.print(hablando);
-      Serial.print("###");
-      Serial.print(response);
-      Serial.print("*");
     }
-    imprimir = 0;
-  } 
+  }
+  // Mueve el servo a la posición inicial (0 grados)
+  miServo.write(servoGrados1);
+  miServo2.write(servoGrados2);
+  miServo3.write(servoGrados3);
+  miServo4.write(servoGrados4);
+  delay(10);
 }

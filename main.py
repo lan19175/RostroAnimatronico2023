@@ -4,6 +4,7 @@ import pyaudio
 import wave
 import time
 import random
+import serial
 
 from kivy.config import Config
 from kivy.app import App
@@ -484,7 +485,7 @@ class MainWindow(Screen):
 class ManualServo(BoxLayout):
     file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
     file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
-
+    serial_id = "M1"
     min_val = StringProperty("0")
     max_val = StringProperty("180")
     servo_angle_text = StringProperty()
@@ -499,15 +500,19 @@ class ManualServo(BoxLayout):
     slider_val = NumericProperty()
 
     def slider_func(self, value):
+        global serial_data
         self.servo_angle = int(value)
         self.servo_angle_text = f'{int(value)}°'
         self.slider_val = int(value)
+        serial_value = "<#" + self.serial_id + ":" + str(value) + ">"
+        serial_data.write(bytes(serial_value, 'utf-8'))
 
 
 # MotorWindow, ventana control manual de motores
 class MotorWindow(Screen):
     def on_pre_enter(self):
-        global motor_window
+        global motor_window, serial_data
+        serial_data = serial.Serial("COM22", baudrate=115200)
         # valores iniciales de los servos
         motor_window = self
         initial_value = [131, 51, 104,
