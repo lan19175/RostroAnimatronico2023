@@ -183,7 +183,17 @@ class SettingWindow(Popup):
         return available_cameras_label
 
     def conectar_com(self):
-        pass
+        global serial_data
+        no_com = self.ids.serial_com.text
+        contect_com = "COM" + no_com
+        try:
+            serial_data = serial.Serial(contect_com, baudrate=115200)
+            self.ids.exito_conexion.text = "¡Conexión exitosa!"
+            self.ids.exito_conexion.color = (0, 1, 0, 1)
+        except Exception as e:
+            self.ids.exito_conexion.text = "¡Conexión Fallida!"
+            self.ids.exito_conexion.color = (1, 0, 0, 1)
+            print(e)
 
     def cerrar_app(self):
         global cam
@@ -512,7 +522,7 @@ class ManualServo(BoxLayout):
 class MotorWindow(Screen):
     def on_pre_enter(self):
         global motor_window, serial_data
-        serial_data = serial.Serial("COM22", baudrate=115200)
+        
         # valores iniciales de los servos
         motor_window = self
         initial_value = [131, 51, 104,

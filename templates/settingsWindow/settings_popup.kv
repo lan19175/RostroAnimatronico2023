@@ -3,6 +3,7 @@
 #: import FallOutTransition kivy.uix.screenmanager.FallOutTransition
 
 #:set colorUVG (0,141/255,54/255,1)
+#:set colorUVGPress (0/255, 117/255, 45/255, 1)
 
 <CustomSpinnerOptions@SpinnerOption>:
     background_color: (10/255, 132/255, 55/255, .8)
@@ -72,7 +73,7 @@
                 width: 200
             FloatLayout:
                 TextInput:
-                    id: COM
+                    id: serial_com
                     input_filter: "int"
                     pos_hint: {'center_x':0.1, 'center_y': 0.5}
                     size_hint: [None, None]
@@ -92,13 +93,27 @@
                     id: "buscar_port"
                     background_normal: ''
                     background_down: ''
-                    background_color: colorUVG
+                    background_color: (0, 0, 0, 0)
+                    color_background: (0,141/255,54/255,1)
                     color: (1, 1, 1, 1)
                     text: "Conectar"
                     font_size: 40
                     size_hint: [None, None]
                     size: [200, 50]
                     pos_hint: {'center_x':0.5, 'center_y':0.5}
+                    canvas.before:
+                        Color:
+                            rgba: self.color_background
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [25]
+                    on_press: 
+                        self.color_background = colorUVGPress
+                    on_release: 
+                        root.conectar_com()
+                        self.color_background = colorUVG
+
             Label:
                 text:''
                 size_hint: [None, 1]
@@ -137,7 +152,15 @@
             on_release: 
                 self.background_color = (1, 0, 0, 1)
                 root.cerrar_app()
-        Label:
-            text: ''
-            size_hint: [1, None]
-            height: 100
+        FloatLayout:
+            Label:
+                id: exito_conexion
+                text: ""
+                font_size: 28
+                bold: True
+                color: (0, 1, 0, 1)
+                outline_color: (0, 0, 0)
+                outline_width: 1
+                size_hint: [1, None]
+                height: 100
+                pos: [720, 480]
