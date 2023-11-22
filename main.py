@@ -312,16 +312,18 @@ class MainWindow(Screen):
                 try:
                     ints = chatbot.predict_class(user_ask)
                     bandera_ints = 1
-                except ImportError:
+                except Exception as e:
                     bandera_ints = 0
+                    print(e)
                 if (bandera_ints == 1):
                     if (float(ints[0]['probability']) >= 0.7):
                         try:
                             intents = json.loads(open(file_path,
                                                  encoding="utf-8").read())
                             res = chatbot.get_response(ints, intents)
-                        except ImportError:
+                        except Exception as e:
                             res = "Lo siento, no pude entenderte"
+                            print(e)
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                     else:
@@ -430,8 +432,9 @@ class MainWindow(Screen):
         try:
             user_ask = chatbot.wave_to_text(wave_name)
             text_to_speech = 1
-        except ImportError:
+        except Exception as e:
             user_ask = "Lo siento, no pude entenderte"
+            print(e)
         if (text_to_speech == 1):
             self.add_mensaje_usuario(user_ask)
             dummy = 2
@@ -446,6 +449,7 @@ class MainWindow(Screen):
             evento.clear()
             dummy = 0
             self.add_mensaje_chatbot(user_ask)
+            res = "Lo siento, no pude entenderte"
             time.sleep(0.1)
             chatbot_new_messege = 0
         hablando = 1
@@ -522,16 +526,23 @@ class ManualServo(BoxLayout):
 class MotorWindow(Screen):
     def on_pre_enter(self):
         global motor_window, serial_data
-        
         # valores iniciales de los servos
         motor_window = self
-        initial_value = [131, 51, 104,
-                         112, 74, 41,
-                         118, 150, 99,
-                         54, 170, 43,
-                         195, 37, 250,
-                         270, 115, 180,
-                         300]
+        serial_data.write(bytes("<&>", 'utf-8'))
+        serial_data.write(bytes("<*>", 'utf-8'))
+        serial_recieved = serial_data.readline().decode('utf-8')
+        if (serial_recieved[0] == "<"):
+            serial_recieved = serial_recieved[2:-3]
+            serial_recieved_array = serial_recieved.split(",")
+            initial_value = [int(n) for n in serial_recieved_array]
+        else:
+            initial_value = [131, 51, 104,
+                             112, 74, 41,
+                             118, 150, 99,
+                             54, 170, 43,
+                             195, 37, 250,
+                             270, 115, 180,
+                             300]
         for i in range(19):
             id = "manual_servo" + str(i)
             value = initial_value[i]
@@ -576,8 +587,9 @@ class MotorWindow(Screen):
                 M19=emoji["M19"])
             self.ids.emoji_options.add_widget(new)
 
-    def send_gesto(self):
-        pass
+    def on_pre_leave(self):
+        global serial_data
+        serial_data.write(bytes("<*>", 'utf-8'))
 
     # creación objeto emoji con formato json
     def new_emoji_data(self, name, emoji, motores):
@@ -673,6 +685,7 @@ class MinMaxServo(BoxLayout):
     pos_y_brazo = NumericProperty(.17)
     pos_x_text = NumericProperty(.467)
     pos_y_text = NumericProperty(.53)
+    slider_val = NumericProperty()
 
     # al presionar enter en las entradas de min o max se actualizan los valores
     def on_value(self, value, min_max):
@@ -682,6 +695,10 @@ class MinMaxServo(BoxLayout):
             self.max_val = value
 
     def slider_func(self, value):
+        global serial_data
+        self.slider_val = int(value)
+        serial_value = "<#" + self.serial_id + ":" + str(value) + ">"
+        serial_data.write(bytes(serial_value, 'utf-8'))
         self.servo_angle = int(value)
         self.servo_angle_text = f'{int(value)}°'
 
@@ -744,6 +761,26 @@ class MotorDataSettingWindow(Screen):
         pass
 
     def on_pre_enter(self):
+        global serial_data
+        serial_data.write(bytes("<&>", 'utf-8'))
+        serial_data.write(bytes("<*>", 'utf-8'))
+        serial_recieved = serial_data.readline().decode('utf-8')
+        if (serial_recieved[0] == "<"):
+            serial_recieved = serial_recieved[2:-3]
+            serial_recieved_array = serial_recieved.split(",")
+            initial_value = [int(n) for n in serial_recieved_array]
+        else:
+            initial_value = [30, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90]
+        for i in range(19):
+            id = "min_max_servo" + str(i)
+            value = initial_value[i]
+            self.ids[str(id)].slider_val = value
         file_path = 'templates/dataSettingWindow/servos_data.json'
         with open(file_path, 'r', encoding='utf-8') as json_file:
             servos_list = json.load(json_file)
@@ -751,6 +788,10 @@ class MotorDataSettingWindow(Screen):
             id = "min_max_servo" + servo["id"]
             self.ids[str(id)].min_val = str(servo["min"])
             self.ids[str(id)].max_val = str(servo["max"])
+
+    def on_pre_leave(self):
+        global serial_data
+        serial_data.write(bytes("<*>", 'utf-8'))
 
     def guardar_min_max(self):
         file_path = 'templates/dataSettingWindow/servos_data.json'

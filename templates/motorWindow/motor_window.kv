@@ -190,41 +190,6 @@
                     height: self.minimum_height
                     padding: [25, 5]
                     spacing: 25
-            BoxLayout:
-                orientation: "horizontal"
-                size_hint: [None, None]
-                size: [275, 50]
-                pos_hint: {'center_x':0.65}
-                background_color: (0,141/255,54/255,1)
-                canvas.before:
-                    Color:
-                        rgba: self.background_color
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-                        radius: [15]
-                
-                Label:
-                    text: ""
-                    size_hint: [None, 1]
-                    width: 10
-                Button:
-                    text: "REALIZAR GESTO"
-                    font_size: 30
-                    size_hint: [None, None]
-                    size: [250, 50]
-                    background_normal: ''
-                    background_down: ''
-                    background_color: (0, 0, 0, 0)
-                    on_press: 
-                        self.parent.background_color = colorUVGPress
-                    on_release: 
-                        self.parent.background_color = colorUVG
-                        root.send_gesto()
-                Label:
-                    text: ""
-                    size_hint: [None, 1]
-                    width: 10
             Label:
                 text: ""
                 size_hint: [1, None]

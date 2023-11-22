@@ -6,10 +6,14 @@ int servoPin2 = 10;
 int servoPin3 = 11;
 int servoPin4 = 5;
 
-int servoGrados1 = 0;
-int servoGrados2 = 0;
-int servoGrados3 = 0;
-int servoGrados4 = 0;
+int servoGrados1 = 100;
+int servoGrados2 = 80;
+int servoGrados3 = 10;
+int servoGrados4 = 33;
+int numServos = 19;
+String servoVals[19]={"100","80","10","33","25","72","63","54","46","38","177","36","55","140","89","25","30","100","170",};
+
+bool modoManual = false;
 
 char inbyte = 0;
 String inbyteString;
@@ -56,6 +60,21 @@ void loop() {
           String valorMotor = payload.substring(separatorIndex+1, payload.length());
           servoGrados4 = valorMotor.toInt();
         }
+      }else if(protocoloCase == "*"){
+        modoManual = !modoManual;
+      }else if(protocoloCase == "&"){
+         servoVals[0] = String(servoGrados1);
+         servoVals[1] = String(servoGrados2);
+         servoVals[2] = String(servoGrados3);
+         servoVals[3] = String(servoGrados4);
+         String envio = "<&";
+         for (int i=0;i<numServos;i++){
+          envio+= servoVals[i];
+          envio+= ",";
+         }
+         envio.remove(envio.length()-1);
+         envio+=">";
+         Serial.println(envio);
       }else{
         Serial.println("no existe el caso");
       }
