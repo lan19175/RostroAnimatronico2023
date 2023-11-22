@@ -11,7 +11,11 @@ int servoGrados2 = 80;
 int servoGrados3 = 10;
 int servoGrados4 = 33;
 int numServos = 19;
+int servoDelay = 1;
 String servoVals[19]={"100","80","10","33","25","72","63","54","46","38","177","36","55","140","89","25","30","100","170",};
+int servoMin[19];
+int servoMax[19];
+String Respuesta = "";
 
 bool modoManual = false;
 
@@ -75,6 +79,24 @@ void loop() {
          envio.remove(envio.length()-1);
          envio+=">";
          Serial.println(envio);
+      }else if(protocoloCase == "%"){
+        int separatorIndex = 0;
+        int separatorIndexNext = 0;
+        int separatorIndexmin=0;
+        separatorIndexNext = payload.indexOf(';');
+        for (int i=0;i<3;i++){
+          String valorMotor = payload.substring(separatorIndex+1,separatorIndexNext);
+          separatorIndexmin = valorMotor.indexOf(',');
+          String servo_min = valorMotor.substring(0,separatorIndexmin);
+          servoMin[i] = servo_min.toInt();
+          String servo_max = valorMotor.substring(separatorIndexmin+1,valorMotor.length());
+          servoMax[i] = servo_max.toInt();
+          separatorIndex = separatorIndexNext;
+          separatorIndexNext = payload.indexOf(';',separatorIndex+1);
+        }
+      }else if(protocoloCase == "$"){
+          Respuesta = payload.substring(1,payload.length());
+          Serial.println(Respuesta);
       }else{
         Serial.println("no existe el caso");
       }

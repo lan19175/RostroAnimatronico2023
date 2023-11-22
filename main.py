@@ -190,6 +190,18 @@ class SettingWindow(Popup):
             serial_data = serial.Serial(contect_com, baudrate=115200)
             self.ids.exito_conexion.text = "¡Conexión exitosa!"
             self.ids.exito_conexion.color = (0, 1, 0, 1)
+            time.sleep(2)
+            file_path = 'templates/dataSettingWindow/servos_data.json'
+            with open(file_path, 'r', encoding='utf-8') as json_file:
+                servos_list = json.load(json_file)
+            serial_env = "<%"
+            for servo in servos_list:
+                serial_env += (str(servo["min"])
+                               + ","+str(servo["max"])
+                               + ";")
+            serial_env = serial_env[:-1]
+            serial_env += ">"
+            serial_data.write(bytes(serial_env, 'utf-8'))
         except Exception as e:
             self.ids.exito_conexion.text = "¡Conexión Fallida!"
             self.ids.exito_conexion.color = (1, 0, 0, 1)
@@ -485,13 +497,19 @@ class MainWindow(Screen):
         self.ids.scrollview_celular.scroll_to(new)
 
     def add_mensaje_chatbot(self, text):
-        global dummy
+        global dummy, serial_data
         [ancho, altura, texto_arreglado] = self.new_mensaje(text)
         new = MensajeCelularChatbot(texto=texto_arreglado,
                                     ancho=ancho,
                                     altura=altura)
         self.ids.celular.add_widget(new, index=0)
         self.ids.scrollview_celular.scroll_to(new)
+        serial_env = "<$"
+        serial_env += str(text)
+        serial_env += ">"
+        serial_data.write(bytes(serial_env, 'utf-8'))
+        # lectura = serial_data.readline().decode('utf-8')
+        # print(lectura)
         # dummy = 1
 
 
@@ -794,6 +812,7 @@ class MotorDataSettingWindow(Screen):
         serial_data.write(bytes("<*>", 'utf-8'))
 
     def guardar_min_max(self):
+        global serial_data
         file_path = 'templates/dataSettingWindow/servos_data.json'
         with open(file_path, 'r', encoding='utf-8') as json_file:
             servos_list = json.load(json_file)
@@ -803,6 +822,16 @@ class MotorDataSettingWindow(Screen):
                 servos_list[i]["max"] = int(self.ids[str(id)].max_val)
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(servos_list, json_file, indent=2)
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+        serial_env = "<%"
+        for servo in servos_list:
+            serial_env += (str(servo["min"])
+                           + ","+str(servo["max"])
+                           + ";")
+        serial_env = serial_env[:-1]
+        serial_env += ">"
+        serial_data.write(bytes(serial_env, 'utf-8'))
 
     def chatbot_data(self):
         global chatbot_details
