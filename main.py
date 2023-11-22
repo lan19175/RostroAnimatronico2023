@@ -208,7 +208,7 @@ class SettingWindow(Popup):
             print(e)
 
     def cerrar_app(self):
-        global cam
+        global cam, serial_data
         App.get_running_app().stop()
         Window.close()
         evento.clear()
@@ -216,6 +216,7 @@ class SettingWindow(Popup):
         video.clear()
         cam.release()
         cv2.destroyAllWindows()
+        serial_data.close()
 
 
 class MensajeCelularChatbot(Button):
@@ -349,7 +350,7 @@ class MainWindow(Screen):
             evento.wait()
 
     def show_picture(self):
-        global cam, main_window, label, hablando, res
+        global cam, main_window, label, hablando, res, serial_data
         ret, frame = cam.read()
         texture = Texture.create(size=(frame.shape[1], frame.shape[0]),
                                  colorfmt='bgr')
@@ -366,6 +367,11 @@ class MainWindow(Screen):
         for emotion in emotion_respuestas["emotions"]:
             if (emotion["tag"] == label):
                 res = random.choice(emotion["responses"])
+                serial_env = "<$"
+                serial_env += str(res)
+                serial_env += ">"
+                serial_data.write(bytes(serial_env, 'utf-8'))
+
         hablando = 1
         hablar.set()
 
