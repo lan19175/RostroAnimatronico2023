@@ -1,92 +1,59 @@
-# RostroAnimatronico2023
-Librerías instaladas
-Package                      Version
----------------------------- --------
-absl-py                      1.4.0
-astunparse                   1.6.3
-blis                         0.7.10
-cachetools                   5.3.1
-catalogue                    2.0.9
-certifi                      2023.5.7
-cffi                         1.15.1
-charset-normalizer           3.2.0
-click                        8.1.6
-colorama                     0.4.6
-comtypes                     1.2.0
-confection                   0.1.0
-cymem                        2.0.7
-docutils                     0.20.1
-es-core-news-sm              3.6.0
-flatbuffers                  23.5.26
-gast                         0.4.0
-google-auth                  2.22.0
-google-auth-oauthlib         1.0.0
-google-pasta                 0.2.0
-grpcio                       1.56.0
-h5py                         3.9.0
-idna                         3.4
-Jinja2                       3.1.2
-joblib                       1.3.1
-keras                        2.13.1
-Kivy                         2.2.1
-kivy-deps.angle              0.3.3
-kivy-deps.glew               0.3.1
-kivy-deps.sdl2               0.6.0
-Kivy-Garden                  0.1.5
-langcodes                    3.3.0
-libclang                     16.0.6
-Markdown                     3.4.3
-MarkupSafe                   2.1.3
-murmurhash                   1.0.9
-nltk                         3.8.1
-numpy                        1.23.1
-oauthlib                     3.2.2
-ObjDict                      0.4.4
-opencv-contrib-python        4.8.0.74
-opt-einsum                   3.3.0
-packaging                    23.1
-pathy                        0.10.2
-pip                          23.2.1
-preshed                      3.0.8
-protobuf                     4.23.4
-pyasn1                       0.5.0
-pyasn1-modules               0.3.0
-PyAudio                      0.2.13
-pycparser                    2.21
-pydantic                     1.10.12
-Pygments                     2.15.1
-pyo                          1.0.5
-pypiwin32                    223
-pyserial                     3.5
-pyttsx3                      2.7
-pywin32                      306
-regex                        2023.6.3
-requests                     2.31.0
-requests-oauthlib            1.3.1
-rsa                          4.9
-setuptools                   68.0.0
-six                          1.16.0
-smart-open                   6.3.0
-sounddevice                  0.4.6
-spacy                        3.6.0
-spacy-legacy                 3.0.12
-spacy-loggers                1.0.4
-SpeechRecognition            3.10.0
-srsly                        2.4.7
-tensorboard                  2.13.0
-tensorboard-data-server      0.7.1
-tensorflow                   2.13.0
-tensorflow-cpu               2.13.0
-tensorflow-estimator         2.13.0
-tensorflow-intel             2.13.0
-tensorflow-io-gcs-filesystem 0.31.0
-termcolor                    2.3.0
-thinc                        8.1.10
-tqdm                         4.65.0
-typer                        0.9.0
-typing_extensions            4.5.0
-urllib3                      1.26.16
-wasabi                       1.1.2
-Werkzeug                     2.3.6
-wheel                        0.40.0
-wrapt                        1.15.0
+
+# Implementación de una interfaz de uso y control para el rostro animatrónico de la Universidad del Valle de Guatemala
+
+En este trabajo se creó una interfaz gráfica para el rostro animatrónico de la Universidad del Valle de GUatemala en donde se unieron los programas de un Chatbot y la detección de emociones por medio de visión por computadora. También se agrega el control de motores por medio de la GUI conectado por UART utilizando comunicación serial.
+
+## Composición de las carpetas
+
+#### Serial_reception
+
+Se encuentra el archivo .ino con la decodificación del protocolo de comunicación para poder instalarla en el microcontrolador correspondiente
+
+#### templates
+
+En esta carpta se encuentran subcarpetas divididas por pantallas y componentes importantes de la GUI. En su mayoría son archivo .kv con la programación de la estética utilizando la librería de Kivy
+
+#### Trainer.py
+
+Archivo que se utiliza al modificar la base de datos del Chatbot o agregar nuevas categorías
+
+#### main.py
+
+Archivo principal del programa, es el que se debe ejecutar para correr el programa y el que contiene todo el funcionamiento backend de la aplicación
+
+#### requirements.txt
+
+Contiene todas las librerías utilizadas para el funcionamiento de este programa. Es el que se utilizará al momento de la creación del virtual enviroment para su ejecución
+
+
+## Installation
+
+Abrir Windows power shell como administrador
+
+Ejecutar el siguiente comando
+
+```bash
+Get-ExecutionPolicy -List ​
+```
+Revisar en la lista si CurrenUser aparece como RemoteSigned. En caso contrario ejecutar el siguiente comando
+```bash
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser ​
+```
+Una vez se realizó esto se debe proceder a crear una virtual enviroment con Visual Code abriendo una terminal en la carpeta del programa y corriendo los siguientes códigos
+```bash
+python -m venv myvenv
+```
+```bash
+myvenv\Scripts\activate
+```
+```bash
+pip install -r requirements.txt
+```
+Existe un error de compatiblidad entre el archivo de Trainer y la librería numpy por lo que debemos instalar una versión anterior ejecutando el siguiente comand
+```bash
+pip install numpy==1.23.1
+```
+Ahora ya podemos ejecutar el archivo haciendo click en el botón de play de VSCode al abrir el archivo de main.py o ejecutando el siguiente comando
+```bash
+python main.py
+```
