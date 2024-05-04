@@ -161,9 +161,9 @@
             min: root.min_val
             max: root.max_val
             step: 1
-            value: 90
+            value: root.slider_val
             orientation: "horizontal"
-            sensitivity: "handle"
+            
             value_track: True
             value_track_color: colorUVG
             value_track_width: 7
@@ -240,49 +240,61 @@
                         MinMaxServo:
                             id: min_max_servo0
                             servo_nombre: "OJOS EN X"
+                            serial_id: "M1"
                         MinMaxServo:
                             id: min_max_servo1
                             servo_nombre: "OJOS EN Y"
+                            serial_id: "M2"
                     # SG3 SG4
                     MinMaxBoxLayout:
                         MinMaxServo:
                             id: min_max_servo2
                             servo_nombre: "PARPADO IZQ"
+                            serial_id: "M3"
                         MinMaxServo:
                             id: min_max_servo3
                             servo_nombre: "PARPADO DER"
+                            serial_id: "M4"
                     # SG5 SG6
                     MinMaxBoxLayout:
                         MinMaxServo:
                             id: min_max_servo4
                             servo_nombre: "CEJA DER EN Y"
+                            serial_id: "M5"
                         MinMaxServo:
                             id: min_max_servo5
                             servo_nombre: "CEJA IZQ EN Y"
+                            serial_id: "M6"
                     # SG7 SG8
                     MinMaxBoxLayout:
                         MinMaxServo:
                             id: min_max_servo6
                             servo_nombre: "CEJA DER EN X"
+                            serial_id: "M7"
                         MinMaxServo:
                             id: min_max_servo7
                             servo_nombre: "CEJA DER EN Y"
+                            serial_id: "M8"
                     # SG9 SG10
                     MinMaxBoxLayout:
                         MinMaxServo:
                             id: min_max_servo8
                             servo_nombre: "LABIO IZQ DEL"
+                            serial_id: "M9"
                         MinMaxServo:
                             id: min_max_servo9
                             servo_nombre: "LABIO IZQ TRA"
+                            serial_id: "M10"
                     # SG11 SG12
                     MinMaxBoxLayout:
                         MinMaxServo:
                             id: min_max_servo10
                             servo_nombre: "LABIO DER DEL"
+                            serial_id: "M11"
                         MinMaxServo:
                             id: min_max_servo11
                             servo_nombre: "LABIO DER TRA"
+                            serial_id: "M12"
                     # Servo1 Servo2 AX-12A 
                     MinMaxBoxLayout:
                         MinMaxServo:
@@ -294,6 +306,7 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .55
+                            serial_id: "M13"
                         MinMaxServo:
                             id: min_max_servo13
                             servo_nombre: "SERVO 14"
@@ -303,6 +316,7 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .55
+                            serial_id: "M14"
                     # Servo3 AX-12A Servo1 Y4XL
                     MinMaxBoxLayout:
                         MinMaxServo:
@@ -314,6 +328,7 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .55
+                            serial_id: "M15"
                         MinMaxServo:
                             id: min_max_servo15
                             servo_nombre: "SERVO 16"
@@ -323,6 +338,7 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .6
+                            serial_id: "M16"
                     # Servo2 Servo3 Y4XL
                     MinMaxBoxLayout:
                         MinMaxServo:
@@ -334,6 +350,7 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .6
+                            serial_id: "M17"
                         MinMaxServo:
                             id: min_max_servo17
                             servo_nombre: "SERVO 18"
@@ -343,6 +360,7 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .6
+                            serial_id: "M18"
                     # Servo4 Y4XL
                     MinMaxBoxLayout:
                         MinMaxServo:
@@ -354,6 +372,7 @@
                             pos_y_brazo: .23
                             pos_x_text: .535
                             pos_y_text: .6
+                            serial_id: "M19"
         
         BoxLayout:
             orientation:"vertical"

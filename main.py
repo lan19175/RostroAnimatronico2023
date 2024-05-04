@@ -4,6 +4,7 @@ import pyaudio
 import wave
 import time
 import random
+import serial
 
 from kivy.config import Config
 from kivy.app import App
@@ -23,7 +24,7 @@ from keras.utils import img_to_array
 import numpy as np
 
 import templates.mainWindow.chatBotP as chatbot
-# import Trainer
+import Trainer
 
 # variables a utilizar
 dummy = 0
@@ -182,7 +183,40 @@ class SettingWindow(Popup):
         return available_cameras_label
 
     def conectar_com(self):
-        pass
+        global serial_data
+        no_com = self.ids.serial_com.text
+        contect_com = "COM" + no_com
+        try:
+            serial_data = serial.Serial(contect_com, baudrate=115200)
+            self.ids.exito_conexion.text = "¡Conexión exitosa!"
+            self.ids.exito_conexion.color = (0, 1, 0, 1)
+            time.sleep(2)
+            file_path = 'templates/dataSettingWindow/servos_data.json'
+            with open(file_path, 'r', encoding='utf-8') as json_file:
+                servos_list = json.load(json_file)
+            serial_env = "<%"
+            for servo in servos_list:
+                serial_env += (str(servo["min"])
+                               + ","+str(servo["max"])
+                               + ";")
+            serial_env = serial_env[:-1]
+            serial_env += ">"
+            serial_data.write(bytes(serial_env, 'utf-8'))
+        except Exception as e:
+            self.ids.exito_conexion.text = "¡Conexión Fallida!"
+            self.ids.exito_conexion.color = (1, 0, 0, 1)
+            print(e)
+
+    def cerrar_app(self):
+        global cam, serial_data
+        App.get_running_app().stop()
+        Window.close()
+        evento.clear()
+        hablar.clear()
+        video.clear()
+        cam.release()
+        cv2.destroyAllWindows()
+        serial_data.close()
 
 
 class MensajeCelularChatbot(Button):
@@ -282,6 +316,7 @@ class MainWindow(Screen):
     def chat_bot_do(self):
         while (1):
             global dummy, frames, evento, stream, user_ask, chatbot_new_messege
+            file_path = 'templates/dataSettingWindow/TF/intentsUVG.json'
             if dummy == 1:
                 data = stream.read(chunk)
                 frames.append(data)
@@ -290,14 +325,18 @@ class MainWindow(Screen):
                 try:
                     ints = chatbot.predict_class(user_ask)
                     bandera_ints = 1
-                except ImportError:
+                except Exception as e:
                     bandera_ints = 0
+                    print(e)
                 if (bandera_ints == 1):
                     if (float(ints[0]['probability']) >= 0.7):
                         try:
-                            res = chatbot.get_response(ints, chatbot.intents)
-                        except ImportError:
+                            intents = json.loads(open(file_path,
+                                                 encoding="utf-8").read())
+                            res = chatbot.get_response(ints, intents)
+                        except Exception as e:
                             res = "Lo siento, no pude entenderte"
+                            print(e)
                         time.sleep(0.1)
                         chatbot_new_messege = 1
                     else:
@@ -311,7 +350,7 @@ class MainWindow(Screen):
             evento.wait()
 
     def show_picture(self):
-        global cam, main_window, label, hablando, res
+        global cam, main_window, label, hablando, res, serial_data
         ret, frame = cam.read()
         texture = Texture.create(size=(frame.shape[1], frame.shape[0]),
                                  colorfmt='bgr')
@@ -328,6 +367,11 @@ class MainWindow(Screen):
         for emotion in emotion_respuestas["emotions"]:
             if (emotion["tag"] == label):
                 res = random.choice(emotion["responses"])
+                serial_env = "<$"
+                serial_env += str(res)
+                serial_env += ">"
+                serial_data.write(bytes(serial_env, 'utf-8'))
+
         hablando = 1
         hablar.set()
 
@@ -406,8 +450,9 @@ class MainWindow(Screen):
         try:
             user_ask = chatbot.wave_to_text(wave_name)
             text_to_speech = 1
-        except ImportError:
+        except Exception as e:
             user_ask = "Lo siento, no pude entenderte"
+            print(e)
         if (text_to_speech == 1):
             self.add_mensaje_usuario(user_ask)
             dummy = 2
@@ -422,6 +467,7 @@ class MainWindow(Screen):
             evento.clear()
             dummy = 0
             self.add_mensaje_chatbot(user_ask)
+            res = "Lo siento, no pude entenderte"
             time.sleep(0.1)
             chatbot_new_messege = 0
         hablando = 1
@@ -457,13 +503,19 @@ class MainWindow(Screen):
         self.ids.scrollview_celular.scroll_to(new)
 
     def add_mensaje_chatbot(self, text):
-        global dummy
+        global dummy, serial_data
         [ancho, altura, texto_arreglado] = self.new_mensaje(text)
         new = MensajeCelularChatbot(texto=texto_arreglado,
                                     ancho=ancho,
                                     altura=altura)
         self.ids.celular.add_widget(new, index=0)
         self.ids.scrollview_celular.scroll_to(new)
+        serial_env = "<$"
+        serial_env += str(text)
+        serial_env += ">"
+        serial_data.write(bytes(serial_env, 'utf-8'))
+        # lectura = serial_data.readline().decode('utf-8')
+        # print(lectura)
         # dummy = 1
 
 
@@ -471,7 +523,7 @@ class MainWindow(Screen):
 class ManualServo(BoxLayout):
     file1 = "templates/motorWindow/imagenes/SG90/Servo_cuerpo.png"
     file2 = "templates/motorWindow/imagenes/SG90/Servo_movil_v2.png"
-
+    serial_id = "M1"
     min_val = StringProperty("0")
     max_val = StringProperty("180")
     servo_angle_text = StringProperty()
@@ -486,24 +538,35 @@ class ManualServo(BoxLayout):
     slider_val = NumericProperty()
 
     def slider_func(self, value):
+        global serial_data
         self.servo_angle = int(value)
         self.servo_angle_text = f'{int(value)}°'
         self.slider_val = int(value)
+        serial_value = "<#" + self.serial_id + ":" + str(value) + ">"
+        serial_data.write(bytes(serial_value, 'utf-8'))
 
 
 # MotorWindow, ventana control manual de motores
 class MotorWindow(Screen):
     def on_pre_enter(self):
-        global motor_window
+        global motor_window, serial_data
         # valores iniciales de los servos
         motor_window = self
-        initial_value = [131, 51, 104,
-                         112, 74, 41,
-                         118, 150, 99,
-                         54, 170, 43,
-                         195, 37, 250,
-                         270, 115, 180,
-                         300]
+        serial_data.write(bytes("<&>", 'utf-8'))
+        serial_data.write(bytes("<*>", 'utf-8'))
+        serial_recieved = serial_data.readline().decode('utf-8')
+        if (serial_recieved[0] == "<"):
+            serial_recieved = serial_recieved[2:-3]
+            serial_recieved_array = serial_recieved.split(",")
+            initial_value = [int(n) for n in serial_recieved_array]
+        else:
+            initial_value = [131, 51, 104,
+                             112, 74, 41,
+                             118, 150, 99,
+                             54, 170, 43,
+                             195, 37, 250,
+                             270, 115, 180,
+                             300]
         for i in range(19):
             id = "manual_servo" + str(i)
             value = initial_value[i]
@@ -548,8 +611,9 @@ class MotorWindow(Screen):
                 M19=emoji["M19"])
             self.ids.emoji_options.add_widget(new)
 
-    def send_gesto(self):
-        pass
+    def on_pre_leave(self):
+        global serial_data
+        serial_data.write(bytes("<*>", 'utf-8'))
 
     # creación objeto emoji con formato json
     def new_emoji_data(self, name, emoji, motores):
@@ -645,6 +709,7 @@ class MinMaxServo(BoxLayout):
     pos_y_brazo = NumericProperty(.17)
     pos_x_text = NumericProperty(.467)
     pos_y_text = NumericProperty(.53)
+    slider_val = NumericProperty()
 
     # al presionar enter en las entradas de min o max se actualizan los valores
     def on_value(self, value, min_max):
@@ -654,6 +719,10 @@ class MinMaxServo(BoxLayout):
             self.max_val = value
 
     def slider_func(self, value):
+        global serial_data
+        self.slider_val = int(value)
+        serial_value = "<#" + self.serial_id + ":" + str(value) + ">"
+        serial_data.write(bytes(serial_value, 'utf-8'))
         self.servo_angle = int(value)
         self.servo_angle_text = f'{int(value)}°'
 
@@ -679,7 +748,7 @@ class AppendChatbot(Popup):
             chatbot_details["intents"].append(new_data)
             json_file.seek(0)
             json.dump(chatbot_details, json_file, indent=4, ensure_ascii=False)
-        # Trainer.runTraining()
+        Trainer.runTraining()
         self.dismiss()
 
 
@@ -716,6 +785,26 @@ class MotorDataSettingWindow(Screen):
         pass
 
     def on_pre_enter(self):
+        global serial_data
+        serial_data.write(bytes("<&>", 'utf-8'))
+        serial_data.write(bytes("<*>", 'utf-8'))
+        serial_recieved = serial_data.readline().decode('utf-8')
+        if (serial_recieved[0] == "<"):
+            serial_recieved = serial_recieved[2:-3]
+            serial_recieved_array = serial_recieved.split(",")
+            initial_value = [int(n) for n in serial_recieved_array]
+        else:
+            initial_value = [30, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90, 90, 90,
+                             90]
+        for i in range(19):
+            id = "min_max_servo" + str(i)
+            value = initial_value[i]
+            self.ids[str(id)].slider_val = value
         file_path = 'templates/dataSettingWindow/servos_data.json'
         with open(file_path, 'r', encoding='utf-8') as json_file:
             servos_list = json.load(json_file)
@@ -724,7 +813,12 @@ class MotorDataSettingWindow(Screen):
             self.ids[str(id)].min_val = str(servo["min"])
             self.ids[str(id)].max_val = str(servo["max"])
 
+    def on_pre_leave(self):
+        global serial_data
+        serial_data.write(bytes("<*>", 'utf-8'))
+
     def guardar_min_max(self):
+        global serial_data
         file_path = 'templates/dataSettingWindow/servos_data.json'
         with open(file_path, 'r', encoding='utf-8') as json_file:
             servos_list = json.load(json_file)
@@ -734,6 +828,16 @@ class MotorDataSettingWindow(Screen):
                 servos_list[i]["max"] = int(self.ids[str(id)].max_val)
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(servos_list, json_file, indent=2)
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            servos_list = json.load(json_file)
+        serial_env = "<%"
+        for servo in servos_list:
+            serial_env += (str(servo["min"])
+                           + ","+str(servo["max"])
+                           + ";")
+        serial_env = serial_env[:-1]
+        serial_env += ">"
+        serial_data.write(bytes(serial_env, 'utf-8'))
 
     def chatbot_data(self):
         global chatbot_details
@@ -798,7 +902,7 @@ class MotorDataSettingWindow(Screen):
                 intent["responses"] = response_array
         with open(file_path, 'w', encoding='utf-8') as json_file:
             json.dump(chatbot_details, json_file, ensure_ascii=False, indent=4)
-        # Trainer.runTraining()
+        Trainer.runTraining()
 
     def modificar_emotion_detector(self):
         global emotion_responses

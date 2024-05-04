@@ -310,6 +310,18 @@
                 "Me gustan mucho los animales, pero mis favoritos son los perros.",
                 "Me gustan mucho los perros."
             ]
+        },
+        {
+            "tag": "Computadoras",
+            "patterns": [
+                "Qué sabes de computadoras?",
+                "Te gustan las computadoras personales?",
+                "Qué computadora me recomiendas?"
+            ],
+            "responses": [
+                "Actualmente no poseo mucho conocimiento de computadoras",
+                "No lo sé busca en chatGPT"
+            ]
         }
     ]
 }

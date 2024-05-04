@@ -74,6 +74,8 @@ def clean_up_sentence(sentence):
 
 # Limpia la oración de entrada y elimina los elementos repetidos
 def bag_of_words(sentence):
+    words = pickle.load(open('templates/dataSettingWindow/TF/wordsUVG.pkl',
+                             'rb'))
     sentence_words = clean_up_sentence(sentence)
     bag = [0]*len(words)
     for w in sentence_words:
@@ -85,6 +87,9 @@ def bag_of_words(sentence):
 
 # Predicción de clase
 def predict_class(sentence):
+    classes = pickle.load(open('templates/dataSettingWindow/TF/classesUVG.pkl',
+                          'rb'))
+    model = load_model('templates/dataSettingWindow/TF/chatbotmodelUVG.h5')
     bow = bag_of_words(sentence)
     res = model.predict(np.array([bow]))[0]
     print("traduciendo")
